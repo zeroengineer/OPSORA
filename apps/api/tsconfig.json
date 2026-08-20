@@ -1,0 +1,9 @@
+{
+  "extends": "@opsora/tsconfig/bun.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "eslint.config.js"]
+}

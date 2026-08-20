@@ -1,0 +1,50 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": ["**/.env"],
+  "globalEnv": ["NODE_ENV"],
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "PORT",
+        "WEB_ORIGIN",
+        "DATABASE_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "R2_BUCKET_NAME",
+        "R2_ACCESS_KEY_ID",
+        "R2_SECRET_ACCESS_KEY",
+        "R2_ENDPOINT",
+        "VITE_API_URL",
+        "VITE_APP_URL"
+      ]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": [
+        "PORT",
+        "WEB_ORIGIN",
+        "DATABASE_URL",
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "R2_BUCKET_NAME",
+        "R2_ACCESS_KEY_ID",
+        "R2_SECRET_ACCESS_KEY",
+        "R2_ENDPOINT",
+        "VITE_API_URL",
+        "VITE_APP_URL"
+      ]
+    },
+    "lint": { "outputs": [] },
+    "lint:fix": { "cache": false, "outputs": [] },
+    "typecheck": { "outputs": [] },
+    "db:generate": { "cache": false, "outputs": ["migrations/**"] },
+    "db:migrate": { "cache": false },
+    "db:push": { "cache": false },
+    "db:studio": { "cache": false, "persistent": true },
+    "clean": { "cache": false }
+  }
+}

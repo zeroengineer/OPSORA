@@ -1,0 +1,35 @@
+{
+  "name": "@opsora/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "dependencies": {
+    "@opsora/config": "workspace:*",
+    "@opsora/database": "workspace:*",
+    "better-auth": "1.7.1"
+  },
+  "devDependencies": {
+    "@opsora/eslint-config": "workspace:*",
+    "@opsora/tsconfig": "workspace:*",
+    "@types/react": "19.2.14",
+    "eslint": "10.8.1",
+    "react": "19.2.8",
+    "typescript": "6.0.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  }
+}

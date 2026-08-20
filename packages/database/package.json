@@ -1,0 +1,33 @@
+{
+  "name": "@opsora/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "db:generate": "bun --env-file=../../apps/api/.env drizzle-kit generate",
+    "db:migrate": "bun --env-file=../../apps/api/.env drizzle-kit migrate",
+    "db:push": "bun --env-file=../../apps/api/.env drizzle-kit push",
+    "db:studio": "bun --env-file=../../apps/api/.env drizzle-kit studio",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "dependencies": {
+    "@opsora/config": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@opsora/eslint-config": "workspace:*",
+    "@opsora/tsconfig": "workspace:*",
+    "@types/pg": "8.23.1",
+    "drizzle-kit": "0.31.10",
+    "eslint": "10.8.1",
+    "typescript": "6.0.3"
+  }
+}

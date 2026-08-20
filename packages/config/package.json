@@ -1,0 +1,25 @@
+{
+  "name": "@opsora/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "dependencies": {
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@opsora/eslint-config": "workspace:*",
+    "@opsora/tsconfig": "workspace:*",
+    "eslint": "10.8.1",
+    "typescript": "6.0.3"
+  }
+}

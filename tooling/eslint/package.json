@@ -1,0 +1,20 @@
+{
+  "name": "@opsora/eslint-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./react": "./react.js"
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.4",
+    "globals": "17.11.0",
+    "typescript-eslint": "8.67.0"
+  },
+  "devDependencies": {
+    "eslint": "10.8.1"
+  }
+}
