@@ -35,3 +35,6 @@ Thumbs.db
 # Caches
 .eslintcache
 coverage/
+
+# Playwright MCP artifacts
+.playwright-mcp/

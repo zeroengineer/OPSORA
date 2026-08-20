@@ -31,13 +31,28 @@ const serverEnvSchema = z.object({
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
+/**
+ * Treat empty strings as absent.
+ *
+ * `.env` files commonly carry placeholder keys with no value (`R2_ENDPOINT=`),
+ * which would otherwise fail optional URL validation instead of being skipped.
+ */
+function readRawEnv(): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(process.env).filter(
+      (entry): entry is [string, string] =>
+        entry[1] !== undefined && entry[1] !== "",
+    ),
+  );
+}
+
 let cached: ServerEnv | undefined;
 
 /** Parse and cache the server environment, failing loudly on misconfiguration. */
 export function getServerEnv(): ServerEnv {
   if (cached) return cached;
 
-  const parsed = serverEnvSchema.safeParse(process.env);
+  const parsed = serverEnvSchema.safeParse(readRawEnv());
 
   if (!parsed.success) {
     const issues = parsed.error.issues

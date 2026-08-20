@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --mono:'SF Mono', ui-monospace, SFMono-Regular, Menlo, 'Cascadia Mono', monospace;
+    --bg:#050505; --surface:#101010; --surface2:#171717; --ink:#F6F6F6; --mid:#9A9A9A;
+    --faint:#5C5C5C; --line:#252525; --line2:#1C1C1C; --red:#FF1F14; --redsoft:#2A0B09;
+    --dotoff:#262626;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);overflow-x:auto;font-family:var(--mono);}
+  input,textarea,select,button{font-family:var(--mono);}
+  *{box-sizing:border-box;}
+  a{color:var(--red);text-decoration:none;}
+  a:hover{color:var(--ink);}
+  input,textarea,select,button{font:inherit;color:inherit;}
+  ::selection{background:var(--red);color:#fff;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px;}
+</style>
+</helmet>
+<div class="{{ themeClass }}" style="--red: {{ accent }}; background:var(--bg); color:var(--ink); min-height:100vh;">
+
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100vh; display:grid; grid-template-columns:264px minmax(0,1fr); gap:8px; padding:8px; min-width:1340px; overflow:hidden;">
+
+  <aside style="background:var(--surface); border:1px solid var(--line); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;">
+    <div style="padding:16px 16px 14px; display:flex; align-items:center; gap:11px; border-bottom:1px solid var(--line2);">
+      <span style="width:28px; height:28px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; flex-shrink:0;">
+        <span style="width:8px; height:8px; border-radius:50%; background:var(--red);"></span>
+      </span>
+      <span style="font-size:13px; font-weight:600; letter-spacing:0.14em; flex:1;">OPSORA</span>
+      <span style="font-size:9px; color:var(--faint);">MVP</span>
+    </div>
+
+    <div style="flex:1; overflow-y:auto; padding:6px 8px 12px;">
+      <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="2">
+        <div style="padding:12px 10px 6px; display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">{{ g.label }}</span>
+          <span style="font-size:9px; color:var(--faint);">{{ g.count }}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <sc-for list="{{ g.items }}" as="item" hint-placeholder-count="6">
+            <button onClick="{{ item.onSelect }}" style="{{ item.style }}" style-hover="background:var(--surface2)">
+              <span style="width:20px; height:20px; border-radius:6px; background:{{ item.chipBg }}; color:{{ item.chipInk }}; display:grid; place-items:center; font-size:8.5px; flex-shrink:0;">{{ item.num }}</span>
+              <span style="font-size:12px; text-align:left; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ item.label }}</span>
+              <span style="font-size:9px; color:{{ item.badgeColor }};">{{ item.badge }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="border-top:1px solid var(--line2); padding:8px; display:flex; flex-direction:column; gap:2px;">
+      <sc-for list="{{ navUtility }}" as="u" hint-placeholder-count="3">
+        <button onClick="{{ u.onSelect }}" style="display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border:none; background:transparent; color:var(--mid); cursor:pointer; border-radius:10px;" style-hover="background:var(--surface2); color:var(--ink)">
+          <span style="width:20px; height:20px; border-radius:6px; border:1px solid var(--line); display:grid; place-items:center; font-size:8.5px; flex-shrink:0;">{{ u.mark }}</span>
+          <span style="font-size:12px; text-align:left; flex:1;">{{ u.label }}</span>
+          <span style="font-size:9px; color:var(--faint);">{{ u.hint }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </aside>
+
+  <main style="display:flex; flex-direction:column; overflow:hidden; background:var(--surface); border:1px solid var(--line); border-radius:16px;">
+    <header style="border-bottom:1px solid var(--line); background:var(--surface); padding:0 30px; height:66px; display:flex; align-items:center; gap:24px; flex-shrink:0;">
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <span style="font-size:9px; letter-spacing:0.2em; color:var(--faint);">{{ crumb }}</span>
+        <span style="font-size:16px; font-weight:600; letter-spacing:-0.01em;">{{ title }}</span>
+      </div>
+      <div style="flex:1;"></div>
+      <button onClick="{{ openSearch }}" style="display:flex; align-items:center; gap:10px; background:var(--surface2); border:1px solid var(--line); padding:9px 12px; width:280px; cursor:pointer; border-radius:10px;" style-hover="border-color:var(--red)">
+        <span style="font-size:11px; color:var(--faint);">Search everything</span>
+        <span style="flex:1;"></span>
+        <span style="font-size:9px; color:var(--faint); border:1px solid var(--line); padding:2px 6px; border-radius:6px;">⌘K</span>
+      </button>
+      <div style="display:flex; align-items:center; gap:10px; padding-left:6px; border-left:1px solid var(--line);">
+        <div style="width:30px; height:30px; background:var(--ink); color:var(--bg); display:grid; place-items:center; font-size:11px; border-radius:50%;">SD</div>
+        <div style="display:flex; flex-direction:column;">
+          <span style="font-size:11.5px; font-weight:500;">Studio Owner</span>
+          <span style="font-size:9px; color:var(--faint);">FULL ACCESS</span>
+        </div>
+      </div>
+    </header>
+
+    <div style="flex:1; overflow-y:auto;">
+
+      <!-- DASHBOARD -->
+      <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:22px 26px 60px; display:flex; flex-direction:column; gap:14px;">
+
+          <div style="background:var(--surface2); border:1px solid var(--line); border-radius:20px; padding:22px 24px 16px; display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:24px;">
+              <div style="display:flex; flex-direction:column; gap:11px;">
+                <span style="font-size:9px; letter-spacing:0.18em; color:var(--faint);">FINANCIAL YEAR STATEMENT</span>
+                <div style="display:flex; align-items:center; gap:16px;">
+                  <sc-for list="{{ heroMetrics }}" as="m" hint-placeholder-count="4">
+                    <button onClick="{{ m.onSelect }}" style="{{ m.style }}">
+                      <span style="{{ m.dotStyle }}"></span>
+                      <span style="font-size:11px;">{{ m.label }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:11px;">
+                <span style="font-size:9px; letter-spacing:0.18em; color:var(--faint);">{{ heroPeriod }}</span>
+                <div style="display:flex; gap:2px;">
+                  <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="3">
+                    <button onClick="{{ r.onSelect }}" style="{{ r.style }}">{{ r.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; padding:6px 0 2px;">
+              <span style="font-size:62px; font-weight:500; letter-spacing:-0.045em; line-height:1;">{{ heroValue }}</span>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:10.5px; color:var(--mid);">{{ heroCaption }}</span>
+                <span style="font-size:10.5px; color:var(--red);">{{ heroDelta }}</span>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:flex-end; gap:5px; height:150px; padding:0 2px;">
+              <sc-for list="{{ chartCols }}" as="c" hint-placeholder-count="18">
+                <div style="flex:1; display:flex; flex-direction:column-reverse; gap:4px; align-items:center;">
+                  <sc-for list="{{ c.cells }}" as="d" hint-placeholder-count="10">
+                    <span style="width:5px; height:5px; border-radius:50%; background:{{ d.bg }};"></span>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--faint); border-top:1px solid var(--line2); padding-top:10px;">
+              <span>{{ chartFrom }}</span>
+              <span style="color:var(--ink);">{{ chartTo }}</span>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:var(--surface2); border:1px solid var(--line); padding:16px 18px 14px; display:flex; flex-direction:column; gap:11px; border-radius:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <span style="font-size:9px; letter-spacing:0.16em; color:var(--mid); white-space:nowrap;">{{ k.label }}</span>
+                  <span style="font-size:9.5px; color:{{ k.deltaColor }};">{{ k.delta }}</span>
+                </div>
+                <div style="font-size:25px; font-weight:500; letter-spacing:-0.03em; color:{{ k.valColor }};">{{ k.value }}</div>
+                <div style="display:flex; gap:2px; align-items:flex-end; height:10px;">
+                  <sc-for list="{{ k.spark }}" as="s" hint-placeholder-count="14">
+                    <span style="width:4px; background:{{ s.bg }}; height:{{ s.h }}; border-radius:999px;"></span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:14px;">
+            <div style="background:var(--surface2); border:1px solid var(--line); border-radius:16px; display:flex; flex-direction:column;">
+              <div style="padding:15px 18px 11px; border-bottom:1px solid var(--line2); display:flex; align-items:center; gap:8px;">
+                <span style="width:5px; height:5px; background:var(--red); border-radius:50%;"></span>
+                <span style="font-size:9px; letter-spacing:0.16em; color:var(--mid);">BUSINESS ALERTS</span>
+                <span style="flex:1;"></span>
+                <span style="font-size:9.5px; color:var(--red);">{{ alertCount }}</span>
+              </div>
+              <div style="flex:1;">
+                <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="5">
+                  <div style="padding:12px 18px; border-bottom:1px solid var(--line2); display:flex; gap:12px; align-items:flex-start;">
+                    <span style="font-size:9px; color:{{ a.sevColor }}; padding-top:2px; width:38px; flex-shrink:0;">{{ a.sev }}</span>
+                    <div style="display:flex; flex-direction:column; gap:3px;">
+                      <span style="font-size:11.5px; line-height:1.4;">{{ a.text }}</span>
+                      <span style="font-size:9px; color:var(--faint);">{{ a.meta }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:var(--surface2); border:1px solid var(--line); border-radius:16px;">
+              <div style="padding:15px 18px 11px; border-bottom:1px solid var(--line2); font-size:9px; letter-spacing:0.16em; color:var(--mid);">RECEIVABLES / PAYABLES</div>
+              <sc-for list="{{ money }}" as="m" hint-placeholder-count="4">
+                <div style="padding:12px 18px; border-bottom:1px solid var(--line2); display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                  <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span style="font-size:11.5px;">{{ m.who }}</span>
+                    <span style="font-size:9px; color:var(--faint);">{{ m.note }}</span>
+                  </div>
+                  <span style="font-size:12.5px; color:{{ m.color }}; white-space:nowrap;">{{ m.amount }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--surface2); border:1px solid var(--line); border-radius:16px;">
+              <div style="padding:15px 18px 11px; border-bottom:1px solid var(--line2); font-size:9px; letter-spacing:0.16em; color:var(--mid);">UPCOMING DATES</div>
+              <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="4">
+                <div style="padding:12px 18px; border-bottom:1px solid var(--line2); display:flex; gap:14px; align-items:center;">
+                  <div style="display:flex; flex-direction:column; align-items:center; width:32px; flex-shrink:0;">
+                    <span style="font-size:16px; line-height:1;">{{ u.day }}</span>
+                    <span style="font-size:8.5px; color:var(--faint); letter-spacing:0.1em;">{{ u.mon }}</span>
+                  </div>
+                  <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span style="font-size:11.5px;">{{ u.what }}</span>
+                    <span style="font-size:9px; color:{{ u.color }};">{{ u.kind }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2); border:1px solid var(--line); border-radius:16px;">
+            <div style="padding:15px 20px 11px; border-bottom:1px solid var(--line2); font-size:9px; letter-spacing:0.16em; color:var(--mid);">RECENT ACTIVITY</div>
+            <div style="display:grid; grid-template-columns:repeat(5,1fr);">
+              <sc-for list="{{ activity }}" as="v" hint-placeholder-count="5">
+                <div style="padding:14px 18px; border-right:1px solid var(--line2); display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:9px; color:var(--red);">{{ v.time }}</span>
+                  <span style="font-size:11px; line-height:1.45; color:var(--mid);">{{ v.text }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- FINANCE LEDGER -->
+      <sc-if value="{{ isLedger }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px 30px 60px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden;">
+            <sc-for list="{{ ledgerStats }}" as="s" hint-placeholder-count="5">
+              <div style="background:var(--surface); padding:16px 18px; display:flex; flex-direction:column; gap:8px;">
+                <span style="font-size:9px; letter-spacing:0.16em; color:var(--mid);">{{ s.label }}</span>
+                <span style="font-size:20px; color:{{ s.color }};">{{ s.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px;">
+            <div style="padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <div style="display:flex; gap:2px;">
+                <sc-for list="{{ ledgerFilters }}" as="f" hint-placeholder-count="4">
+                  <button onClick="{{ f.onSelect }}" style="{{ f.style }}">{{ f.label }}</button>
+                </sc-for>
+              </div>
+              <span style="width:1px; height:20px; background:var(--line);"></span>
+              <input value="{{ ledgerQuery }}" onChange="{{ onLedgerQuery }}" placeholder="Filter by description or category" style="flex:1; min-width:180px; background:var(--surface2); border:1px solid var(--line); padding:8px 10px; font-size:11px; border-radius:10px; outline:none;" />
+              <button onClick="{{ toggleAdd }}" style="background:var(--red); color:#fff; border:none; padding:9px 16px; font-size:10px; letter-spacing:0.14em; cursor:pointer; border-radius:10px;" style-hover="opacity:0.85">{{ addLabel }}</button>
+            </div>
+
+            <sc-if value="{{ showAdd }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 18px; border-bottom:1px solid var(--line); background:var(--surface2); display:grid; grid-template-columns:120px 1.6fr 1fr 130px 130px auto; gap:10px; align-items:end;">
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:8.5px; letter-spacing:0.14em; color:var(--mid);">TYPE</span>
+                  <div style="display:flex; gap:2px;">
+                    <button onClick="{{ setIncome }}" style="{{ incomeBtnStyle }}">IN</button>
+                    <button onClick="{{ setExpense }}" style="{{ expenseBtnStyle }}">OUT</button>
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:8.5px; letter-spacing:0.14em; color:var(--mid);">DESCRIPTION</span>
+                  <input value="{{ draftDesc }}" onChange="{{ onDraftDesc }}" placeholder="e.g. Brand sprint — milestone 2" style="background:var(--surface); border:1px solid var(--line); padding:8px 10px; font-size:12px; border-radius:10px; outline:none;" />
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:8.5px; letter-spacing:0.14em; color:var(--mid);">CATEGORY</span>
+                  <select value="{{ draftCat }}" onChange="{{ onDraftCat }}" style="background:var(--surface); border:1px solid var(--line); padding:8px 10px; font-size:12px; border-radius:10px; outline:none;">
+                    <sc-for list="{{ categories }}" as="c" hint-placeholder-count="6">
+                      <option value="{{ c }}">{{ c }}</option>
+                    </sc-for>
+                  </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:8.5px; letter-spacing:0.14em; color:var(--mid);">AMOUNT</span>
+                  <input value="{{ draftAmt }}" onChange="{{ onDraftAmt }}" placeholder="0" style="background:var(--surface); border:1px solid var(--line); padding:8px 10px; font-size:12px; border-radius:10px; outline:none;" />
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="font-size:8.5px; letter-spacing:0.14em; color:var(--mid);">DATE</span>
+                  <input value="{{ draftDate }}" onChange="{{ onDraftDate }}" style="background:var(--surface); border:1px solid var(--line); padding:8px 10px; font-size:12px; border-radius:10px; outline:none;" />
+                </div>
+                <button onClick="{{ commitTxn }}" style="background:var(--ink); color:var(--bg); border:none; padding:10px 18px; font-size:10px; letter-spacing:0.14em; cursor:pointer; border-radius:10px;">RECORD</button>
+              </div>
+            </sc-if>
+
+            <div style="display:grid; grid-template-columns:96px 1fr 150px 130px 130px; padding:11px 18px; border-bottom:1px solid var(--line); font-size:8.5px; letter-spacing:0.16em; color:var(--faint);">
+              <span>DATE</span><span>DESCRIPTION</span><span>CATEGORY</span><span style="text-align:right;">AMOUNT</span><span style="text-align:right;">BALANCE</span>
+            </div>
+            <sc-for list="{{ rows }}" as="t" hint-placeholder-count="10">
+              <div style="display:grid; grid-template-columns:96px 1fr 150px 130px 130px; padding:13px 18px; border-bottom:1px solid var(--line2); align-items:center;" style-hover="background:var(--surface2)">
+                <span style="font-size:11px; color:var(--mid);">{{ t.date }}</span>
+                <span style="font-size:12.5px; display:flex; align-items:center; gap:9px;">
+                  <span style="width:5px; height:5px; border-radius:50%; background:{{ t.dot }}; flex-shrink:0;"></span>{{ t.desc }}
+                </span>
+                <span style="font-size:10px; color:var(--mid);">{{ t.cat }}</span>
+                <span style="font-size:12.5px; text-align:right; color:{{ t.color }};">{{ t.amount }}</span>
+                <span style="font-size:12px; text-align:right; color:var(--mid);">{{ t.balance }}</span>
+              </div>
+            </sc-for>
+            <div style="padding:14px 18px; display:flex; justify-content:space-between; font-size:10px; color:var(--faint);">
+              <span>{{ rowCount }}</span>
+              <span>AUG 2026 · OPENING {{ opening }} → CLOSING {{ closing }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- DOCUMENT TEMPLATES + GENERATION -->
+      <sc-if value="{{ isDocs }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:250px 1fr 1fr; height:100%; min-height:0;">
+          <div style="border-right:1px solid var(--line); background:var(--surface); overflow-y:auto;">
+            <div style="padding:16px 18px 12px; border-bottom:1px solid var(--line2); font-size:9px; letter-spacing:0.18em; color:var(--mid);">TEMPLATES</div>
+            <sc-for list="{{ templates }}" as="tp" hint-placeholder-count="5">
+              <button onClick="{{ tp.onSelect }}" style="{{ tp.style }}">
+                <span style="font-size:12.5px; font-weight:500;">{{ tp.name }}</span>
+                <span style="font-size:9px; color:var(--faint); letter-spacing:0.1em;">{{ tp.meta }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0;">
+            <div style="padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">MARKDOWN EDITOR</span>
+              <span style="font-size:9px; color:var(--faint);">{{ tplVersion }}</span>
+            </div>
+            <textarea value="{{ tplBody }}" onChange="{{ onTplBody }}" spellcheck="false" style="flex:1; min-height:280px; background:var(--surface); border:none; padding:20px; font-size:11.5px; line-height:1.75; resize:none; outline:none;"></textarea>
+            <div style="border-top:1px solid var(--line); padding:14px 18px; background:var(--surface); display:flex; flex-direction:column; gap:10px;">
+              <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">DYNAMIC VARIABLES</span>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <sc-for list="{{ varFields }}" as="v" hint-placeholder-count="4">
+                  <div style="display:flex; flex-direction:column; gap:4px;">
+                    <span style="font-size:9px; color:var(--red);">{{ v.token }}</span>
+                    <input value="{{ v.value }}" onChange="{{ v.onChange }}" placeholder="{{ v.placeholder }}" style="background:var(--surface2); border:1px solid var(--line); padding:7px 9px; font-size:11.5px; border-radius:10px; outline:none;" />
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; min-height:0; background:var(--surface2);">
+            <div style="padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; background:var(--surface);">
+              <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">PREVIEW</span>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <span style="font-size:9px; color:{{ fillColor }};">{{ fillStatus }}</span>
+                <button onClick="{{ generateDoc }}" style="background:var(--red); color:#fff; border:none; padding:8px 14px; font-size:9.5px; letter-spacing:0.14em; cursor:pointer; border-radius:10px;" style-hover="opacity:0.85">GENERATE</button>
+              </div>
+            </div>
+            <div style="flex:1; overflow-y:auto; padding:26px 24px 40px;">
+              <div style="background:var(--surface); border:1px solid var(--line); padding:34px 32px; min-height:420px; border-radius:14px; box-shadow:0 1px 0 var(--line);">
+                <sc-for list="{{ previewBlocks }}" as="b" hint-placeholder-count="8">
+                  <div style="{{ b.style }}">{{ b.text }}</div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ justGenerated }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:14px; border:1px solid var(--red); background:var(--redsoft); padding:12px 16px; border-radius:12px; display:flex; align-items:center; gap:10px;">
+                  <span style="width:6px; height:6px; background:var(--red); border-radius:50%;"></span>
+                  <span style="font-size:11.5px;">{{ generatedMsg }}</span>
+                  <span style="flex:1;"></span>
+                  <button onClick="{{ goVault }}" style="background:none; border:1px solid var(--red); color:var(--red); padding:6px 10px; font-size:9px; letter-spacing:0.12em; cursor:pointer;">OPEN VAULT</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- DOCUMENT VAULT -->
+      <sc-if value="{{ isVault }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:1fr 380px; height:100%; min-height:0;">
+          <div style="display:flex; flex-direction:column; min-height:0; border-right:1px solid var(--line);">
+            <div style="padding:16px 24px; border-bottom:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column; gap:12px;">
+              <input value="{{ vaultQuery }}" onChange="{{ onVaultQuery }}" placeholder="Search by document name, client or category" style="background:var(--surface2); border:1px solid var(--line); padding:11px 13px; font-size:11.5px; border-radius:10px; outline:none;" />
+              <div style="display:flex; gap:2px; flex-wrap:wrap;">
+                <sc-for list="{{ vaultCats }}" as="c" hint-placeholder-count="7">
+                  <button onClick="{{ c.onSelect }}" style="{{ c.style }}">{{ c.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="flex:1; overflow-y:auto;">
+              <div style="display:grid; grid-template-columns:1fr 130px 110px 96px; padding:11px 24px; border-bottom:1px solid var(--line); font-size:8.5px; letter-spacing:0.16em; color:var(--faint); background:var(--surface);">
+                <span>DOCUMENT</span><span>CLIENT</span><span>CATEGORY</span><span style="text-align:right;">DATE</span>
+              </div>
+              <sc-for list="{{ vaultRows }}" as="d" hint-placeholder-count="9">
+                <button onClick="{{ d.onSelect }}" style="{{ d.style }}">
+                  <span style="display:flex; align-items:center; gap:10px; text-align:left;">
+                    <span style="width:5px; height:5px; border-radius:50%; background:{{ d.dot }}; flex-shrink:0;"></span>
+                    <span style="font-size:12.5px;">{{ d.name }}</span>
+                    <sc-if value="{{ d.isNew }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:8px; letter-spacing:0.1em; background:var(--red); color:#fff; padding:2px 7px; border-radius:999px;">GENERATED</span>
+                    </sc-if>
+                  </span>
+                  <span style="font-size:10.5px; color:var(--mid); text-align:left;">{{ d.client }}</span>
+                  <span style="font-size:9.5px; color:var(--mid); text-align:left;">{{ d.cat }}</span>
+                  <span style="font-size:10px; color:var(--faint); text-align:right;">{{ d.date }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:var(--surface); display:flex; flex-direction:column; min-height:0; overflow-y:auto;">
+            <div style="padding:20px 22px 16px; border-bottom:1px solid var(--line2); display:flex; flex-direction:column; gap:8px;">
+              <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">FILE PREVIEW</span>
+              <span style="font-size:16px; font-weight:600; line-height:1.3;">{{ docName }}</span>
+              <span style="font-size:10px; color:var(--faint);">{{ docMeta }}</span>
+            </div>
+            <div style="padding:16px 22px; border-bottom:1px solid var(--line2); display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ docFields }}" as="f" hint-placeholder-count="5">
+                <div style="display:flex; justify-content:space-between; gap:12px;">
+                  <span style="font-size:9.5px; letter-spacing:0.12em; color:var(--faint);">{{ f.k }}</span>
+                  <span style="font-size:11px; text-align:right; color:{{ f.color }};">{{ f.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding:18px 22px; display:flex; flex-direction:column; gap:10px; flex:1;">
+              <span style="font-size:9px; letter-spacing:0.18em; color:var(--mid);">VERSION HISTORY</span>
+              <sc-for list="{{ docVersions }}" as="v" hint-placeholder-count="3">
+                <div style="display:flex; gap:12px; align-items:baseline; border-bottom:1px solid var(--line2); padding-bottom:9px;">
+                  <span style="font-size:10px; color:var(--red); width:26px;">{{ v.ver }}</span>
+                  <div style="display:flex; flex-direction:column; gap:2px;">
+                    <span style="font-size:11.5px;">{{ v.what }}</span>
+                    <span style="font-size:9px; color:var(--faint);">{{ v.when }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="padding:16px 22px 22px; display:flex; gap:8px;">
+              <button style="flex:1; background:var(--ink); color:var(--bg); border:none; padding:11px; font-size:9.5px; letter-spacing:0.14em; cursor:pointer; border-radius:10px;">DOWNLOAD</button>
+              <button style="flex:1; background:none; border:1px solid var(--line); padding:11px; font-size:9.5px; letter-spacing:0.14em; cursor:pointer; border-radius:10px;" style-hover="border-color:var(--red)">REGENERATE</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STUB -->
+      <sc-if value="{{ isStub }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:70px 30px; display:flex; flex-direction:column; align-items:center; gap:18px;">
+          <div style="display:flex; gap:5px;">
+            <sc-for list="{{ stubDots }}" as="s" hint-placeholder-count="12">
+              <span style="width:6px; height:6px; border-radius:50%; background:{{ s.bg }};"></span>
+            </sc-for>
+          </div>
+          <span style="font-size:10px; letter-spacing:0.2em; color:var(--faint);">MODULE {{ stubNum }} / SPECIFIED, NOT YET DESIGNED</span>
+          <span style="font-size:24px; font-weight:600;">{{ title }}</span>
+          <span style="font-size:13px; color:var(--mid); max-width:440px; text-align:center; line-height:1.6; text-wrap:pretty;">{{ stubText }}</span>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+
+  <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeSearch }}" style="position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:flex-start; justify-content:center; padding-top:12vh; z-index:60;">
+      <div style="width:520px; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.6);">
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line);">
+          <span style="width:5px; height:5px; border-radius:50%; background:var(--red); flex-shrink:0;"></span>
+          <input value="{{ searchQuery }}" onChange="{{ onSearchQuery }}" placeholder="Search" style="flex:1; background:none; border:none; padding:0; font-size:14px; outline:none;" />
+          <span style="font-size:8.5px; letter-spacing:0.1em; color:var(--faint); border:1px solid var(--line); padding:3px 7px; border-radius:6px;">ESC</span>
+        </div>
+        <div style="max-height:360px; overflow-y:auto; padding:6px;">
+          <sc-for list="{{ searchGroups }}" as="g" hint-placeholder-count="3">
+            <div style="padding:10px 12px 6px; display:flex; align-items:center; gap:8px;">
+              <span style="font-size:8.5px; letter-spacing:0.16em; color:var(--faint);">{{ g.label }}</span>
+              <span style="flex:1; height:1px; background:var(--line2);"></span>
+            </div>
+            <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="2">
+              <div style="padding:9px 12px; border-radius:10px; display:flex; align-items:center; gap:12px; cursor:pointer;" style-hover="background:var(--surface2)">
+                <span style="width:22px; height:22px; border-radius:7px; background:var(--surface2); color:var(--red); display:grid; place-items:center; font-size:9px; flex-shrink:0;">{{ r.code }}</span>
+                <span style="font-size:12.5px; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.name }}</span>
+                <span style="font-size:9.5px; color:var(--faint); white-space:nowrap;">{{ r.meta }}</span>
+              </div>
+            </sc-for>
+          </sc-for>
+          <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:34px 12px; text-align:center; font-size:11px; color:var(--faint); letter-spacing:0.08em;">NO MATCHES</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- HOME -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh; display:flex; flex-direction:column; padding:8px;">
+    <header style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px 22px; display:flex; align-items:center; gap:26px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="width:26px; height:26px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--red);"></span>
+        </span>
+        <span style="font-size:13px; font-weight:600; letter-spacing:0.16em;">OPSORA</span>
+      </div>
+      <div style="flex:1; display:flex; gap:22px; padding-left:16px;">
+        <sc-for list="{{ homeLinks }}" as="l" hint-placeholder-count="4">
+          <span style="font-size:11.5px; color:var(--mid); cursor:pointer;" style-hover="color:var(--ink)">{{ l }}</span>
+        </sc-for>
+      </div>
+      <button onClick="{{ goLogin }}" style="background:none; border:1px solid var(--line); color:var(--ink); padding:9px 18px; border-radius:999px; font-size:11px; letter-spacing:0.1em; cursor:pointer;" style-hover="border-color:var(--red)">SIGN IN</button>
+      <button onClick="{{ goSignup }}" style="background:var(--red); border:none; color:#fff; padding:10px 20px; border-radius:999px; font-size:11px; letter-spacing:0.1em; cursor:pointer;" style-hover="opacity:0.86">GET STARTED</button>
+    </header>
+
+    <section style="background:var(--surface); border:1px solid var(--line); border-radius:20px; margin-top:8px; padding:70px 60px 0; display:flex; flex-direction:column; align-items:center; gap:22px; overflow:hidden;">
+      <span style="font-size:10px; letter-spacing:0.24em; color:var(--red);">BUSINESS OPERATING SYSTEM</span>
+      <h1 style="margin:0; font-size:60px; font-weight:500; letter-spacing:-0.045em; line-height:1.04; text-align:center; max-width:940px; text-wrap:pretty;">One system for clients, sales, finances, documents and knowledge.</h1>
+      <p style="margin:0; font-size:13.5px; line-height:1.7; color:var(--mid); max-width:560px; text-align:center; text-wrap:pretty;">OPSORA centralizes the operations a small company runs on, so nothing lives in a spreadsheet, an inbox or someone's memory.</p>
+      <div style="display:flex; gap:10px; padding-top:4px;">
+        <button onClick="{{ goSignup }}" style="background:var(--red); border:none; color:#fff; padding:14px 26px; border-radius:999px; font-size:12px; letter-spacing:0.1em; cursor:pointer;" style-hover="opacity:0.86">CREATE ACCOUNT</button>
+        <button onClick="{{ enterApp }}" style="background:none; border:1px solid var(--line); color:var(--ink); padding:14px 26px; border-radius:999px; font-size:12px; letter-spacing:0.1em; cursor:pointer;" style-hover="border-color:var(--red)">VIEW LIVE DEMO</button>
+      </div>
+      <div style="width:100%; max-width:1000px; height:190px; margin-top:26px; border-radius:16px 16px 0 0; border:1px solid var(--line); border-bottom:none; background-color:var(--surface2); background-image:radial-gradient(var(--dotoff) 1.4px, transparent 1.4px); background-size:14px 14px; position:relative;">
+        <div style="position:absolute; left:0; right:0; bottom:0; height:96px; background-image:radial-gradient(var(--red) 1.6px, transparent 1.6px); background-size:14px 14px; opacity:0.55;"></div>
+      </div>
+    </section>
+
+    <section style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px;">
+      <sc-for list="{{ homeCards }}" as="c" hint-placeholder-count="3">
+        <div style="background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:24px 22px 22px; display:flex; flex-direction:column; gap:12px;">
+          <span style="font-size:9px; letter-spacing:0.2em; color:var(--red);">{{ c.num }}</span>
+          <span style="font-size:17px; font-weight:600; letter-spacing:-0.01em;">{{ c.title }}</span>
+          <span style="font-size:12px; line-height:1.65; color:var(--mid); text-wrap:pretty;">{{ c.body }}</span>
+        </div>
+      </sc-for>
+    </section>
+
+    <section style="background:var(--surface); border:1px solid var(--line); border-radius:16px; margin-top:8px; padding:26px 26px 22px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; padding-bottom:16px; border-bottom:1px solid var(--line2);">
+        <span style="font-size:9px; letter-spacing:0.2em; color:var(--mid);">MVP MODULES</span>
+        <span style="font-size:9px; color:var(--faint);">10 SHIPPING · 11 PLANNED</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line2); margin-top:16px; border-radius:12px; overflow:hidden;">
+        <sc-for list="{{ homeModules }}" as="m" hint-placeholder-count="10">
+          <div style="background:var(--surface); padding:16px 16px 18px; display:flex; flex-direction:column; gap:8px;">
+            <span style="font-size:9px; color:var(--faint);">{{ m.num }}</span>
+            <span style="font-size:12px; line-height:1.4;">{{ m.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <footer style="display:flex; align-items:center; justify-content:space-between; padding:22px 22px 12px; font-size:9.5px; color:var(--faint);">
+      <span>OPSORA · BUSINESS OPERATING SYSTEM</span>
+      <span>© 2026</span>
+    </footer>
+  </div>
+  </sc-if>
+
+  <!-- AUTH -->
+  <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh; display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:8px;">
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:34px; display:flex; flex-direction:column; justify-content:space-between; background-image:radial-gradient(var(--dotoff) 1.4px, transparent 1.4px); background-size:16px 16px;">
+      <button onClick="{{ goHome }}" style="display:flex; align-items:center; gap:10px; background:none; border:none; padding:0; cursor:pointer; color:var(--ink);">
+        <span style="width:26px; height:26px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; background:var(--surface);">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--red);"></span>
+        </span>
+        <span style="font-size:13px; font-weight:600; letter-spacing:0.16em;">OPSORA</span>
+      </button>
+      <div style="display:flex; flex-direction:column; gap:18px; max-width:400px;">
+        <span style="font-size:28px; font-weight:500; letter-spacing:-0.035em; line-height:1.2; text-wrap:pretty;">{{ authPitch }}</span>
+        <div style="display:flex; flex-direction:column; gap:9px;">
+          <sc-for list="{{ authPoints }}" as="p" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="width:5px; height:5px; border-radius:50%; background:var(--red);"></span>
+              <span style="font-size:11.5px; color:var(--mid);">{{ p }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <span style="font-size:9px; letter-spacing:0.16em; color:var(--faint);">SECURE WORKSPACE · SINGLE TENANT</span>
+    </div>
+
+    <div style="background:var(--surface); border:1px solid var(--line); border-radius:20px; display:flex; align-items:center; justify-content:center; padding:34px;">
+      <div style="width:100%; max-width:360px; display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:22px; font-weight:600; letter-spacing:-0.03em;">{{ authTitle }}</span>
+          <span style="font-size:11.5px; color:var(--mid);">{{ authSub }}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ authFields }}" as="fl" hint-placeholder-count="3">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="font-size:9px; letter-spacing:0.16em; color:var(--mid);">{{ fl.label }}</span>
+              <input value="{{ fl.value }}" onChange="{{ fl.onChange }}" type="{{ fl.type }}" placeholder="{{ fl.placeholder }}" style="background:var(--surface2); border:1px solid var(--line); padding:12px 14px; font-size:12.5px; border-radius:12px; outline:none;" style-focus="border-color:var(--red)" />
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <button onClick="{{ toggleRemember }}" style="display:flex; align-items:center; gap:9px; background:none; border:none; padding:0; cursor:pointer; color:var(--mid);">
+              <span style="{{ rememberStyle }}"></span>
+              <span style="font-size:11px;">Keep me signed in</span>
+            </button>
+            <span style="font-size:11px; color:var(--red); cursor:pointer;">Forgot password</span>
+          </div>
+        </sc-if>
+        <button onClick="{{ enterApp }}" style="background:var(--red); border:none; color:#fff; padding:14px; border-radius:999px; font-size:11.5px; letter-spacing:0.12em; cursor:pointer;" style-hover="opacity:0.86">{{ authCta }}</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="flex:1; height:1px; background:var(--line2);"></span>
+          <span style="font-size:9px; color:var(--faint);">OR</span>
+          <span style="flex:1; height:1px; background:var(--line2);"></span>
+        </div>
+        <button onClick="{{ enterApp }}" style="background:none; border:1px solid var(--line); color:var(--ink); padding:13px; border-radius:999px; font-size:11.5px; letter-spacing:0.08em; cursor:pointer;" style-hover="border-color:var(--red)">Continue with Google</button>
+        <div style="display:flex; justify-content:center; gap:8px; padding-top:2px;">
+          <span style="font-size:11px; color:var(--mid);">{{ authSwitchText }}</span>
+          <button onClick="{{ toggleAuth }}" style="background:none; border:none; padding:0; font-size:11px; color:var(--red); cursor:pointer;">{{ authSwitchCta }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E10600&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#E10600&quot;,&quot;#FF1F14&quot;,&quot;#C1121F&quot;,&quot;#FF3B30&quot;],&quot;section&quot;:&quot;Theme&quot;}}">
+const NAV = [
+  ["dashboard","Dashboard",1],["clients","Client Management",2],["pipeline","Sales Pipeline",3],
+  ["ledger","Finance Ledger",4],["invoices","Invoice Management",5],["payments","Payments & Receivables",6],
+  ["docs","Document Management",7],["vault","Document Vault",8],["kb","Knowledge Base",9],
+  ["alerts","Business Alerts",10],["history","Activity History",11],["search","Search",12]
+];
+const BUILT = ["dashboard","ledger","docs","vault"];
+const STUBS = {
+  clients:"Client profiles, multiple contacts, notes, and a complete business view per client — deals, documents, invoices, payments and activity in one place.",
+  pipeline:"Deals moving through Lead, Discussion, Proposal, Negotiation, Won and Lost with pipeline value and conversion metrics.",
+  invoices:"Invoices generated and received, linked to clients, with draft, sent, partially paid, paid, overdue and cancelled states.",
+  payments:"Receivables and payables with due dates, partial payments and payment history linked back to invoices.",
+  kb:"Internal articles by category with markdown, search and version history — operations, finance, sales, HR, pricing, SOPs.",
+  alerts:"Every configurable business alert in one feed: overdue invoices, due dates, receivables, deal closings, document expiry.",
+  history:"A chronological timeline of client, deal, invoice, payment and document activity across the platform.",
+  search:"Unified search across clients, contacts, deals, invoices, payments, documents and knowledge articles. Try the search field in the header."
+};
+const CATS = ["Client Payment","Project Revenue","Retainer","Software","Contractor","Office","Travel","Taxes","Marketing"];
+
+const TXNS = [
+  ["2026-08-19","Ardent Labs — brand sprint milestone 2","Project Revenue",14000,"in"],
+  ["2026-08-18","Figma + Linear annual seats","Software",-1180,"out"],
+  ["2026-08-16","Northwind Retail — retainer Aug","Retainer",6500,"in"],
+  ["2026-08-14","Freelance motion designer — Ardent","Contractor",-3200,"out"],
+  ["2026-08-12","Meridian Foods — invoice #INV-1042","Client Payment",9800,"in"],
+  ["2026-08-11","Advance tax instalment Q2","Taxes",-5400,"out"],
+  ["2026-08-09","Coworking desk — August","Office",-620,"out"],
+  ["2026-08-07","Kestrel Studio — audit phase 1","Project Revenue",7400,"in"],
+  ["2026-08-05","Client visit — Bengaluru","Travel",-940,"out"],
+  ["2026-08-04","Portfolio site ads","Marketing",-480,"out"],
+  ["2026-08-02","Halden & Co — proposal accepted, deposit","Project Revenue",10500,"in"],
+  ["2026-08-01","Cloud storage + email","Software",-210,"out"]
+];
+
+const TEMPLATES = [
+  {name:"Project Proposal", meta:"PROPOSALS · V4", body:"# Project Proposal\n\n**Prepared for:** {{client_name}}\n**Prepared by:** {{company_name}}\n**Date:** {{date}}\n\n## Scope\n\nThis proposal covers the engagement described below, delivered in three phases with review at the end of each phase.\n\n- Discovery and audit\n- Design and build\n- Handover and documentation\n\n## Commercials\n\nTotal engagement value: **{{amount}}**\n50% on signature, 50% on final delivery. Invoices are due 14 days from issue.\n\n## Acceptance\n\nSigned for and on behalf of {{client_name}}.\n\n{{signatory_name}}"},
+  {name:"Retainer Agreement", meta:"AGREEMENTS · V2", body:"# Retainer Agreement\n\nThis agreement is made on {{date}} between {{company_name}} and {{client_name}}.\n\n## Term\n\nRolling monthly retainer, 30 days notice either side.\n\n## Fee\n\n{{amount}} per month, invoiced on the first working day.\n\n## Signature\n\n{{signatory_name}}"},
+  {name:"Quotation", meta:"QUOTATIONS · V1", body:"# Quotation\n\n**To:** {{client_name}}\n**From:** {{company_name}}\n**Issued:** {{date}}\n\nQuoted amount: **{{amount}}**\nValid for 30 days from the issue date.\n\n{{signatory_name}}"},
+  {name:"Mutual NDA", meta:"MOUS · V3", body:"# Mutual Non-Disclosure Agreement\n\nBetween {{company_name}} and {{client_name}}, effective {{date}}.\n\nBoth parties agree to keep confidential information confidential for a period of three years from the effective date.\n\n{{signatory_name}}"},
+  {name:"Invoice Cover Note", meta:"INVOICES · V1", body:"# Invoice Cover Note\n\nDear {{client_name}},\n\nPlease find attached our invoice dated {{date}} for {{amount}}, covering the work completed this period.\n\nThank you,\n{{signatory_name}}\n{{company_name}}"}
+];
+
+const VAULT = [
+  ["Ardent Labs — Brand Sprint Proposal","Ardent Labs","Proposals","19 AUG","gen"],
+  ["Northwind Retail — Retainer Agreement","Northwind","Agreements","12 AUG","gen"],
+  ["Meridian Foods — INV-1042","Meridian","Invoices","10 AUG","gen"],
+  ["Kestrel Studio — Mutual NDA","Kestrel","MOUs","08 AUG","up"],
+  ["Halden & Co — Quotation Q-238","Halden & Co","Quotations","02 AUG","gen"],
+  ["GST registration certificate","—","Certificates","28 JUL","up"],
+  ["Contractor engagement policy","—","Policies","21 JUL","up"],
+  ["Ardent Labs — Signed SOW","Ardent Labs","Agreements","14 JUL","up"],
+  ["Studio expense policy 2026","—","Internal","02 JUL","up"],
+  ["Meridian Foods — MOU","Meridian","MOUs","19 JUN","gen"]
+];
+
+const SEARCH = [
+  ["CLIENT","Ardent Labs","4 deals · 2 invoices open"],
+  ["DEAL","Ardent Labs — Phase 3 build","$28,000 · Negotiation"],
+  ["INVOICE","INV-1042 · Meridian Foods","$9,800 · Paid"],
+  ["PAYMENT","Northwind retainer — August","$6,500 · Received"],
+  ["DOCUMENT","Ardent Labs — Brand Sprint Proposal","Proposals · 19 Aug"],
+  ["KNOWLEDGE","Invoice numbering SOP","Internal Processes"],
+  ["CONTACT","Priya Raman — Northwind Retail","Head of Marketing"]
+];
+
+const money = n => (n < 0 ? "-" : "") + "$" + Math.abs(Math.round(n)).toLocaleString("en-US");
+
+class Component extends DCLogic {
+  state = {
+    screen:"dashboard", theme:"dark", range:"monthly",
+    txns: TXNS.map(t => ({date:t[0], desc:t[1], cat:t[2], amt:t[3], dir:t[4]})),
+    showAdd:false, draft:{dir:"in", desc:"", cat:"Project Revenue", amt:"", date:"2026-08-20"},
+    ledgerFilter:"all", ledgerQuery:"", metric:"income",
+    tplIndex:0, tplBodies:TEMPLATES.map(t => t.body),
+    vars:{client_name:"Ardent Labs", company_name:"Opsora Studio", date:"20 August 2026", amount:"$28,000", signatory_name:""},
+    justGenerated:false,
+    vault:VAULT.map(v => ({name:v[0], client:v[1], cat:v[2], date:v[3], src:v[4], isNew:false})),
+    vaultCat:"All", vaultQuery:"", docIndex:0,
+    searchOpen:false, searchQuery:"",
+    view:"home", authMode:"login", remember:true,
+    auth:{name:"", email:"", company:"", password:""}
+  };
+
+  componentDidMount(){
+    this._key = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); this.setState({searchOpen:true}); }
+      if (e.key === "Escape") this.setState({searchOpen:false});
+    };
+    window.addEventListener("keydown", this._key);
+  }
+  componentWillUnmount(){ window.removeEventListener("keydown", this._key); }
+
+  set = (k,v) => this.setState({[k]:v});
+  dark(){ return this.state.theme === "dark"; }
+
+  pill(active, extra){
+    return "background:" + (active ? "var(--ink)" : "transparent") + "; color:" + (active ? "var(--bg)" : "var(--mid)") +
+      "; border:1px solid " + (active ? "var(--ink)" : "var(--line)") + "; padding:6px 11px; font-size:9px; letter-spacing:0.14em; cursor:pointer; border-radius:999px;" + (extra || "");
+  }
+
+  ledgerRows(){
+    const q = this.state.ledgerQuery.toLowerCase();
+    return this.state.txns.filter(t => {
+      if (this.state.ledgerFilter === "in" && t.dir !== "in") return false;
+      if (this.state.ledgerFilter === "out" && t.dir !== "out") return false;
+      if (q && !(t.desc + " " + t.cat).toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  vaultList(){
+    const q = this.state.vaultQuery.toLowerCase();
+    return this.state.vault.filter(d => {
+      if (this.state.vaultCat !== "All" && d.cat !== this.state.vaultCat) return false;
+      if (q && !(d.name + " " + d.client + " " + d.cat).toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  filled(){
+    const body = this.state.tplBodies[this.state.tplIndex];
+    let out = body;
+    Object.keys(this.state.vars).forEach(k => {
+      out = out.split("{{" + k + "}}").join(this.state.vars[k] || "{{" + k + "}}");
+    });
+    return out;
+  }
+
+  renderVals(){
+    const s = this.state, dark = this.dark();
+    const screen = s.screen;
+    const txns = s.txns;
+    const income = txns.filter(t => t.dir === "in").reduce((a,t) => a + t.amt, 0);
+    const expense = txns.filter(t => t.dir === "out").reduce((a,t) => a + Math.abs(t.amt), 0);
+    const opening = 21400;
+    const closing = opening + income - expense;
+
+    const nav = [].map(([key,label,n]) => {
+      const active = screen === key;
+      return {
+        num: String(n).padStart(2,"0"), label, badge: key === "alerts" ? "4" : null,
+        numColor: active ? "var(--red)" : "var(--faint)",
+        onSelect: () => this.setState({screen:key, justGenerated:false}),
+        style: "display:flex; align-items:center; gap:11px; width:100%; padding:9px 12px; border:none; cursor:pointer; border-radius:10px; background:" +
+          (active ? "var(--surface2)" : "transparent") + "; color:" + (active ? "var(--ink)" : "var(--mid)") +
+          "; font-weight:" + (active ? 600 : 400) + "; box-shadow:" + (active ? "inset 2px 0 0 var(--red)" : "none") + ";"
+      };
+    });
+
+    const rangeTotals = {daily:"$3,410", weekly:"$18,240", monthly:"$48,200"};
+    const metricSeed = {income:29, net:11, expenses:5, receivables:17}[s.metric];
+    const seedFor = {daily:7, weekly:13, monthly:29}[s.range] + metricSeed;
+    const cols = {daily:16, weekly:20, monthly:24}[s.range];
+    const chartCols = Array.from({length:cols}, (_,i) => {
+      const v = 3 + Math.round(((Math.sin(i * 1.7 + seedFor) + 1) / 2) * 7 + (i / cols) * 2);
+      return { cells: Array.from({length:11}, (_,r) => ({ bg: r < v ? (r > v - 3 ? "var(--red)" : "var(--ink)") : "var(--dotoff)" })) };
+    });
+
+    const spark = (arr, red) => arr.map(h => ({h: h + "px", bg: red ? "var(--red)" : "var(--faint)"}));
+
+    const kpis = [
+      {label:"REVENUE · AUG", value:money(income), delta:"+34%", deltaColor:"var(--red)", valColor:"var(--ink)", spark:spark([3,5,4,7,6,9,8,10,7,9,10,8,6,10])},
+      {label:"EXPENSES · AUG", value:money(expense), delta:"+8%", deltaColor:"var(--mid)", valColor:"var(--ink)", spark:spark([4,3,5,4,6,5,4,7,5,4,6,5,3,4])},
+      {label:"NET CASH FLOW", value:money(income - expense), delta:"HEALTHY", deltaColor:"var(--mid)", valColor:"var(--ink)", spark:spark([2,4,3,6,5,8,7,9,6,8,9,7,5,9], true)},
+      {label:"OUTSTANDING", value:"$22,400", delta:"3 OVERDUE", deltaColor:"var(--red)", valColor:"var(--red)", spark:spark([6,6,7,5,8,7,9,8,7,9,8,10,9,10])}
+    ];
+
+    const alerts = [
+      {sev:"OVERDUE", sevColor:"var(--red)", text:"INV-1039 · Halden & Co — $6,200 unpaid for 18 days", meta:"RECEIVABLE · ESCALATE"},
+      {sev:"DUE 3D", sevColor:"var(--red)", text:"Contractor payout — motion design, Ardent phase 2", meta:"PAYABLE · $3,200"},
+      {sev:"DEAL", sevColor:"var(--mid)", text:"Kestrel Studio audit closes in 5 days, still in Negotiation", meta:"PIPELINE · $18,000"},
+      {sev:"DOC", sevColor:"var(--mid)", text:"Northwind retainer agreement expires 30 Sep", meta:"DOCUMENT EXPIRY"},
+      {sev:"FLAG", sevColor:"var(--mid)", text:"Software spend up 41% against the last three months", meta:"FINANCIAL ANOMALY"}
+    ];
+
+    const templates = TEMPLATES.map((t,i) => ({
+      name:t.name, meta:t.meta,
+      onSelect: () => this.setState({tplIndex:i, justGenerated:false}),
+      style:"display:flex; flex-direction:column; gap:5px; align-items:flex-start; width:100%; padding:14px 18px; border:none; border-bottom:1px solid var(--line2); cursor:pointer; text-align:left; background:" +
+        (s.tplIndex === i ? "var(--surface2)" : "transparent") + "; color:var(--ink); box-shadow:" + (s.tplIndex === i ? "inset 2px 0 0 var(--red)" : "none") + ";"
+    }));
+
+    const varFields = [
+      ["client_name","Ardent Labs"],["company_name","Opsora Studio"],
+      ["date","20 August 2026"],["amount","$28,000"],["signatory_name","Your name"]
+    ].map(([k,ph]) => ({
+      token:"{{" + k + "}}", value:s.vars[k], placeholder:ph,
+      onChange: e => this.setState({vars:Object.assign({}, s.vars, {[k]:e.target.value}), justGenerated:false})
+    }));
+
+    const previewBlocks = this.filled().split("\n").map(line => {
+      const t = line.trim();
+      if (!t) return {text:" ", style:"height:10px;"};
+      if (t.startsWith("## ")) return {text:t.slice(3), style:"font-size:10px; letter-spacing:0.18em; color:var(--red); margin:20px 0 8px;"};
+      if (t.startsWith("# ")) return {text:t.slice(2), style:"font-size:22px; font-weight:700; letter-spacing:-0.01em; margin:0 0 14px; padding-bottom:12px; border-bottom:1px solid var(--line);"};
+      if (t.startsWith("- ")) return {text:"·  " + t.slice(2), style:"font-size:12.5px; line-height:1.7; color:var(--mid); padding-left:6px;"};
+      const clean = t.split("**").join("");
+      const bold = t.indexOf("**") === 0 || t.includes("**");
+      return {text:clean, style:"font-size:12.5px; line-height:1.75; color:var(--ink); font-weight:" + (bold ? 500 : 400) + ";"};
+    });
+
+    const unfilled = Object.keys(s.vars).filter(k => !s.vars[k]).length;
+    const vlist = this.vaultList();
+    const doc = vlist[Math.min(s.docIndex, Math.max(vlist.length - 1, 0))] || {name:"No document", client:"—", cat:"—", date:"—", src:"up", isNew:false};
+    const vaultCats = ["All","Proposals","Quotations","Invoices","Agreements","MOUs","Certificates","Policies","Internal"].map(c => ({
+      label:c.toUpperCase(), onSelect: () => this.setState({vaultCat:c, docIndex:0}), style:this.pill(s.vaultCat === c)
+    }));
+
+    const sq = s.searchQuery.toLowerCase();
+    const hits = SEARCH.filter(r => !sq || (r[0] + r[1] + r[2]).toLowerCase().includes(sq));
+    const GROUPS = [["Records",["CLIENT","CONTACT","DEAL"]],["Money",["INVOICE","PAYMENT"]],["Knowledge",["DOCUMENT","KNOWLEDGE"]]];
+    const searchGroups = GROUPS.map(([label,kinds]) => ({
+      label:label.toUpperCase(),
+      items:hits.filter(r => kinds.indexOf(r[0]) !== -1).map(r => ({code:r[0].slice(0,2), name:r[1], meta:r[2]}))
+    })).filter(g => g.items.length);
+
+    const rows = this.ledgerRows();
+    let run = closing;
+    const ledgerRows = rows.map(t => {
+      const bal = run; run = run - t.amt;
+      return {date:t.date.slice(5).replace("-"," / "), desc:t.desc, cat:t.cat.toUpperCase(),
+        amount:(t.dir === "in" ? "+" : "−") + "$" + Math.abs(t.amt).toLocaleString("en-US"),
+        color:t.dir === "in" ? "var(--ink)" : "var(--red)",
+        dot:t.dir === "in" ? "var(--ink)" : "var(--red)", balance:money(bal)};
+    });
+
+    return {
+      themeClass: dark ? "om-dark" : "om-light",
+      accent: this.props.accent || (dark ? "#FF1F14" : "#E10600"),
+      themeLabel: dark ? "DARK" : "LIGHT",
+      lightDot: dark ? "var(--faint)" : "var(--ink)",
+      darkDot: dark ? "var(--red)" : "var(--faint)",
+      toggleTheme: () => this.setState({theme: dark ? "light" : "dark"}),
+      isApp: s.view === "app", isHome: s.view === "home",
+      isAuth: s.view === "login" || s.view === "signup",
+      isLogin: s.view === "login",
+      goHome: () => this.set("view","home"),
+      goLogin: () => this.set("view","login"),
+      goSignup: () => this.set("view","signup"),
+      enterApp: () => this.setState({view:"app", screen:"dashboard"}),
+      toggleAuth: () => this.set("view", s.view === "login" ? "signup" : "login"),
+      homeLinks: ["Platform","Modules","Pricing","Docs"],
+      homeCards: [
+        {num:"01", title:"Money, in one ledger", body:"Income, expenses, invoices, receivables and payables tracked against a single running balance — no reconciling two tools at month end."},
+        {num:"02", title:"Documents that write themselves", body:"Markdown templates with dynamic variables. Fill five fields, generate the proposal, and it lands in the vault with version history."},
+        {num:"03", title:"Nothing quietly overdue", body:"Alerts surface overdue invoices, payment dates, deals nearing their close and documents about to expire."}
+      ],
+      homeModules: [
+        "Dashboard","Client Management","Sales Pipeline","Finance Ledger","Invoice Management",
+        "Payments & Receivables","Document Management","Document Vault","Knowledge Base","Business Alerts"
+      ].map((label,i) => ({label, num:String(i + 1).padStart(2,"0")})),
+      authPitch: s.view === "signup" ? "Set up your workspace once. Run the whole company from it." : "Everything the company runs on, behind one login.",
+      authPoints: s.view === "signup"
+        ? ["Ten modules live from day one","Your templates, your categories","Invite the team when you're ready"]
+        : ["Clients, deals and invoices in one view","Generated documents kept versioned","Alerts before things go overdue"],
+      authTitle: s.view === "signup" ? "Create your workspace" : "Sign in",
+      authSub: s.view === "signup" ? "Free while you set things up. No card needed." : "Welcome back. Pick up where you left off.",
+      authCta: s.view === "signup" ? "CREATE ACCOUNT" : "SIGN IN",
+      authSwitchText: s.view === "signup" ? "Already have a workspace?" : "No workspace yet?",
+      authSwitchCta: s.view === "signup" ? "Sign in" : "Create one",
+      authFields: (s.view === "signup"
+        ? [["name","YOUR NAME","text","Priya Raman"],["company","COMPANY","text","Opsora Studio"],["email","WORK EMAIL","email","you@company.com"],["password","PASSWORD","password","At least 10 characters"]]
+        : [["email","WORK EMAIL","email","you@company.com"],["password","PASSWORD","password","••••••••••"]]
+      ).map(([k,label,type,placeholder]) => ({
+        label, type, placeholder, value:s.auth[k],
+        onChange: e => this.setState({auth:Object.assign({}, s.auth, {[k]:e.target.value})})
+      })),
+      toggleRemember: () => this.set("remember", !s.remember),
+      rememberStyle: "width:14px; height:14px; border-radius:5px; flex-shrink:0; background:" + (s.remember ? "var(--red)" : "transparent") + "; box-shadow:inset 0 0 0 1px " + (s.remember ? "var(--red)" : "var(--faint)") + ";",
+      navGroups: [
+        ["NAVIGATE", [["dashboard","Dashboard","01",""],["clients","Clients","02","9"],["pipeline","Sales Pipeline","03","5"],["invoices","Invoices","05","3"],["payments","Payments","06","4"],["ledger","Finance Ledger","04","12"]]],
+        ["LIBRARY", [["docs","Documents","07","5"],["vault","Document Vault","08","10"],["kb","Knowledge Base","09","24"]]],
+        ["SIGNALS", [["alerts","Business Alerts","10","5"],["history","Activity History","11",""]]]
+      ].map(([label, items]) => ({
+        label, count: String(items.length).padStart(2,"0"),
+        items: items.map(([key, itemLabel, num, badge]) => {
+          const active = screen === key;
+          return {
+            label:itemLabel, num, badge,
+            chipBg: active ? "var(--red)" : "var(--surface2)",
+            chipInk: active ? "#fff" : "var(--faint)",
+            badgeColor: key === "alerts" ? "var(--red)" : "var(--faint)",
+            onSelect: () => this.setState({screen:key, justGenerated:false}),
+            style:"display:flex; align-items:center; gap:11px; width:100%; padding:8px 10px; border:none; cursor:pointer; border-radius:10px; background:" +
+              (active ? "var(--surface2)" : "transparent") + "; color:" + (active ? "var(--ink)" : "var(--mid)") +
+              "; font-weight:" + (active ? 600 : 400) + "; box-shadow:" + (active ? "inset 0 0 0 1px var(--line)" : "none") + ";"
+          };
+        })
+      })),
+      navUtility: [
+        {mark:"S", label:"Search", hint:"⌘K", onSelect: () => this.set("searchOpen", true)},
+        {mark:"⚙", label:"Settings", hint:"", onSelect: () => {}},
+        {mark:"?", label:"Help & guides", hint:"", onSelect: () => this.setState({screen:"kb"})},
+        {mark:"→", label:"Sign out", hint:"", onSelect: () => this.set("view","home")}
+      ],
+      heroMetrics: [["income","Income"],["net","Net profit"],["expenses","Expenses"],["receivables","Receivables"]].map(([k,label]) => {
+        const active = s.metric === k;
+        return {
+          label,
+          onSelect: () => this.set("metric", k),
+          dotStyle:"width:9px; height:9px; border-radius:50%; flex-shrink:0; background:" + (active ? "var(--red)" : "transparent") + "; box-shadow:inset 0 0 0 1px " + (active ? "var(--red)" : "var(--faint)") + ";",
+          style:"display:flex; align-items:center; gap:7px; background:none; border:none; padding:0; cursor:pointer; color:" + (active ? "var(--ink)" : "var(--mid)") + ";"
+        };
+      }),
+      heroValue: {income:money(income), net:money(income - expense), expenses:money(expense), receivables:"$22,400"}[s.metric],
+      heroCaption: {income:"Income", net:"Net cash flow", expenses:"Expenses", receivables:"Outstanding receivables"}[s.metric],
+      heroDelta: {income:"+34%", net:"+41%", expenses:"+8%", receivables:"3 overdue"}[s.metric],
+      heroPeriod:"AUG 2026 · " + s.range.toUpperCase(),
+            crumb: "OPSORA / " + (NAV.find(n => n[0] === screen) || [,""])[1].toUpperCase(),
+      title: (NAV.find(n => n[0] === screen) || [,""])[1],
+      isDash: screen === "dashboard", isLedger: screen === "ledger",
+      isDocs: screen === "docs", isVault: screen === "vault",
+      isStub: BUILT.indexOf(screen) === -1,
+      stubNum: String((NAV.find(n => n[0] === screen) || [,,1])[2]).padStart(2,"0"),
+      stubText: STUBS[screen] || "",
+      stubDots: Array.from({length:14}, (_,i) => ({bg: i < 5 ? "var(--red)" : "var(--dotoff)"})),
+
+      kpis, alerts, alertCount: String(alerts.length).padStart(2,"0"),
+      chartCols, chartTotal: rangeTotals[s.range], chartDelta:"+326%",
+      chartFrom: s.range === "monthly" ? "JAN $3,250" : (s.range === "weekly" ? "W01 $2,140" : "MON $410"),
+      chartTo: s.range === "monthly" ? "AUG $12,392" : (s.range === "weekly" ? "W20 $6,480" : "SUN $1,290"),
+      ranges: ["daily","weekly","monthly"].map(r => ({label:r.toUpperCase(), onSelect: () => this.set("range", r), style:this.pill(s.range === r)})),
+      money: [
+        {who:"Halden & Co", note:"INV-1039 · 18 days overdue", amount:"$6,200", color:"var(--red)"},
+        {who:"Ardent Labs", note:"INV-1044 · due 28 Aug", amount:"$14,000", color:"var(--ink)"},
+        {who:"Kestrel Studio", note:"INV-1045 · due 04 Sep", amount:"$2,200", color:"var(--ink)"},
+        {who:"Motion contractor", note:"PAYABLE · due 23 Aug", amount:"−$3,200", color:"var(--red)"}
+      ],
+      upcoming: [
+        {day:"23", mon:"AUG", what:"Contractor payout — Ardent phase 2", kind:"PAYABLE $3,200", color:"var(--red)"},
+        {day:"25", mon:"AUG", what:"Kestrel Studio — expected close", kind:"DEAL $18,000", color:"var(--mid)"},
+        {day:"28", mon:"AUG", what:"INV-1044 due — Ardent Labs", kind:"RECEIVABLE $14,000", color:"var(--mid)"},
+        {day:"30", mon:"SEP", what:"Northwind retainer renewal", kind:"DOCUMENT EXPIRY", color:"var(--mid)"}
+      ],
+      activity: [
+        {time:"09:42", text:"Proposal generated for Ardent Labs from Project Proposal v4"},
+        {time:"09:10", text:"Payment of $9,800 recorded against INV-1042"},
+        {time:"YEST", text:"Kestrel Studio deal moved Proposal → Negotiation"},
+        {time:"YEST", text:"Northwind retainer agreement uploaded to the vault"},
+        {time:"18 AUG", text:"Expense recorded: Figma + Linear annual seats"}
+      ],
+
+      ledgerStats: [
+        {label:"OPENING BALANCE", value:money(opening), color:"var(--mid)"},
+        {label:"INCOME", value:money(income), color:"var(--ink)"},
+        {label:"EXPENSES", value:money(-expense), color:"var(--red)"},
+        {label:"NET CASH FLOW", value:money(income - expense), color:"var(--ink)"},
+        {label:"CLOSING BALANCE", value:money(closing), color:"var(--red)"}
+      ],
+      ledgerFilters: [["all","ALL"],["in","INCOME"],["out","EXPENSES"]].map(([k,l]) => ({
+        label:l, onSelect: () => this.set("ledgerFilter", k), style:this.pill(s.ledgerFilter === k)
+      })),
+      ledgerQuery:s.ledgerQuery, onLedgerQuery: e => this.set("ledgerQuery", e.target.value),
+      rows: ledgerRows, rowCount: ledgerRows.length + " TRANSACTIONS",
+      opening: money(opening), closing: money(closing),
+      showAdd:s.showAdd, addLabel: s.showAdd ? "CLOSE" : "+ RECORD ENTRY",
+      toggleAdd: () => this.set("showAdd", !s.showAdd),
+      draftDesc:s.draft.desc, draftCat:s.draft.cat, draftAmt:s.draft.amt, draftDate:s.draft.date,
+      categories:CATS,
+      onDraftDesc: e => this.setState({draft:Object.assign({}, s.draft, {desc:e.target.value})}),
+      onDraftCat: e => this.setState({draft:Object.assign({}, s.draft, {cat:e.target.value})}),
+      onDraftAmt: e => this.setState({draft:Object.assign({}, s.draft, {amt:e.target.value})}),
+      onDraftDate: e => this.setState({draft:Object.assign({}, s.draft, {date:e.target.value})}),
+      setIncome: () => this.setState({draft:Object.assign({}, s.draft, {dir:"in"})}),
+      setExpense: () => this.setState({draft:Object.assign({}, s.draft, {dir:"out"})}),
+      incomeBtnStyle: this.pill(s.draft.dir === "in"),
+      expenseBtnStyle: this.pill(s.draft.dir === "out"),
+      commitTxn: () => {
+        const amt = parseFloat(String(s.draft.amt).replace(/[^0-9.]/g,"")) || 0;
+        if (!s.draft.desc || !amt) return;
+        const t = {date:s.draft.date, desc:s.draft.desc, cat:s.draft.cat, amt: s.draft.dir === "in" ? amt : -amt, dir:s.draft.dir};
+        this.setState({txns:[t].concat(s.txns), showAdd:false, draft:Object.assign({}, s.draft, {desc:"", amt:""})});
+      },
+
+      templates, tplBody:s.tplBodies[s.tplIndex], tplVersion:TEMPLATES[s.tplIndex].meta,
+      onTplBody: e => {
+        const b = s.tplBodies.slice(); b[s.tplIndex] = e.target.value;
+        this.setState({tplBodies:b, justGenerated:false});
+      },
+      varFields, previewBlocks,
+      fillStatus: unfilled ? unfilled + " VARIABLE(S) EMPTY" : "ALL VARIABLES FILLED",
+      fillColor: unfilled ? "var(--red)" : "var(--mid)",
+      justGenerated:s.justGenerated,
+      generatedMsg: TEMPLATES[s.tplIndex].name + " generated for " + (s.vars.client_name || "client") + " and saved to the vault.",
+      generateDoc: () => {
+        const d = {name:(s.vars.client_name || "Untitled") + " — " + TEMPLATES[s.tplIndex].name,
+          client:(s.vars.client_name || "—").split(" ")[0], cat:TEMPLATES[s.tplIndex].meta.split(" ")[0].replace("MOUS","MOUs").replace("PROPOSALS","Proposals").replace("AGREEMENTS","Agreements").replace("QUOTATIONS","Quotations").replace("INVOICES","Invoices"),
+          date:"20 AUG", src:"gen", isNew:true};
+        this.setState({vault:[d].concat(s.vault), justGenerated:true, docIndex:0});
+      },
+      goVault: () => this.setState({screen:"vault", vaultCat:"All", docIndex:0}),
+
+      vaultQuery:s.vaultQuery, onVaultQuery: e => this.setState({vaultQuery:e.target.value, docIndex:0}),
+      vaultCats,
+      vaultRows: vlist.map((d,i) => ({
+        name:d.name, client:d.client, cat:d.cat.toUpperCase(), date:d.date, isNew:d.isNew,
+        dot: d.src === "gen" ? "var(--red)" : "var(--faint)",
+        onSelect: () => this.set("docIndex", i),
+        style:"display:grid; grid-template-columns:1fr 130px 110px 96px; align-items:center; gap:8px; width:100%; padding:14px 24px; border:none; border-bottom:1px solid var(--line2); cursor:pointer; color:var(--ink); background:" +
+          (i === Math.min(s.docIndex, vlist.length - 1) ? "var(--surface)" : "transparent") + "; box-shadow:" + (i === Math.min(s.docIndex, vlist.length - 1) ? "inset 2px 0 0 var(--red)" : "none") + ";"
+      })),
+      docName:doc.name,
+      docMeta:doc.cat.toUpperCase() + " · " + (doc.src === "gen" ? "GENERATED" : "UPLOADED") + " · PDF",
+      docFields: [
+        {k:"CLIENT", v:doc.client, color:"var(--ink)"},
+        {k:"CATEGORY", v:doc.cat, color:"var(--ink)"},
+        {k:"DATE", v:doc.date + " 2026", color:"var(--ink)"},
+        {k:"SOURCE", v:doc.src === "gen" ? "Template v4" : "Manual upload", color:"var(--ink)"},
+        {k:"SIZE", v:"248 KB", color:"var(--mid)"},
+        {k:"LINKED TO", v:doc.client === "—" ? "Internal" : "Deal + Invoice", color:"var(--red)"}
+      ],
+      docVersions: [
+        {ver:"V3", what:"Commercials updated after call", when:"20 AUG · 09:42"},
+        {ver:"V2", what:"Scope section rewritten", when:"18 AUG · 16:20"},
+        {ver:"V1", what:"Generated from template", when:"14 AUG · 11:05"}
+      ],
+
+      searchOpen:s.searchOpen, searchQuery:s.searchQuery, searchGroups, searchEmpty: hits.length === 0,
+      openSearch: () => this.set("searchOpen", true),
+      closeSearch: () => this.set("searchOpen", false),
+      onSearchQuery: e => this.set("searchQuery", e.target.value)
+    };
+  }
+}
+
+</script>
+</body>
+</html>
