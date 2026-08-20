@@ -10,14 +10,14 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+    <div className="rounded-card border border-line bg-red-soft p-4 text-sm text-ink">
       <p className="font-medium">{title}</p>
-      <p className="mt-1 text-red-700">{message}</p>
+      <p className="mt-1 text-mid">{message}</p>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 rounded-md border border-red-300 bg-white px-3 py-1.5 font-medium text-red-700 hover:bg-red-100"
+          className="mt-3 rounded-control border border-line px-3 py-1.5 font-medium text-ink hover:bg-surface-2"
         >
           Try again
         </button>

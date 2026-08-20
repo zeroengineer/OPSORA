@@ -6,9 +6,14 @@ export const MODULES = [
   "dashboard",
   "clients",
   "sales",
+  "invoices",
+  "payments",
   "finance",
   "documents",
-  "knowledge-base",
+  "documentVault",
+  "knowledgeBase",
+  "businessAlerts",
+  "activityHistory",
 ] as const;
 
 export type ModuleId = (typeof MODULES)[number];
@@ -17,9 +22,16 @@ export const ROUTES = {
   dashboard: "/",
   clients: "/clients",
   sales: "/sales",
+  invoices: "/invoices",
+  payments: "/payments",
   finance: "/finance",
   documents: "/documents",
+  documentVault: "/documents/vault",
   knowledgeBase: "/knowledge-base",
+  businessAlerts: "/business-alerts",
+  activityHistory: "/activity-history",
+  login: "/login",
+  signup: "/signup",
 } as const;
 
 /** Mount path for the Better Auth handler on the API. */
