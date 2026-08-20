@@ -1,1 +1,1 @@
-export { DocumentsPage } from "./pages/DocumentsPage.tsx";
+export { DocumentsGeneratorPage } from "./pages/DocumentsGeneratorPage.tsx";

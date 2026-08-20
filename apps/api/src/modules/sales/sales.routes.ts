@@ -5,4 +5,8 @@ import { success } from "@/lib/response.ts";
 
 export const salesRoutes = new Elysia({ prefix: "/sales" })
   .use(requireAuth)
-  .get("/", () => success({ module: "sales", status: "not-implemented" }));
+  .get(
+    "/",
+    () => success({ module: "sales", status: "not-implemented" }),
+    { detail: { tags: ["Sales"], summary: "Not yet implemented" } },
+  );

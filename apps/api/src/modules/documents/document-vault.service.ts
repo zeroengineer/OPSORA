@@ -38,6 +38,7 @@ function toDto(row: VaultRow, versions: VaultVersionRow[]): VaultFileDto {
     sizeBytes: row.sizeBytes,
     currentVersion: row.currentVersion,
     sourceTemplateId: row.sourceTemplateId,
+    variablesUsed: row.variablesUsed,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     versions: versions.map(versionToDto).sort((a, b) => b.version - a.version),

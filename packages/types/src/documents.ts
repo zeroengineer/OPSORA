@@ -41,6 +41,7 @@ export interface VaultFileDto {
   sizeBytes: number;
   currentVersion: number;
   sourceTemplateId: string | null;
+  variablesUsed: Record<string, string> | null;
   createdAt: string;
   updatedAt: string;
   versions: VaultFileVersionDto[];

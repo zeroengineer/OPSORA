@@ -1,10 +1,12 @@
-import { PagePlaceholder } from "@/components/common/PagePlaceholder.tsx";
+import { ModuleStub } from "@/components/common/ModuleStub.tsx";
 
 export function SalesPage() {
   return (
-    <PagePlaceholder
-      title="Sales"
-      description="Pipeline, quotes and orders will live here."
+    <ModuleStub
+      index={3}
+      total={11}
+      title="Sales Pipeline"
+      description="Deals moving through Lead, Discussion, Proposal, Negotiation, Won and Lost with pipeline value and conversion metrics."
     />
   );
 }

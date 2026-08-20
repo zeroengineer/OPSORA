@@ -20,6 +20,7 @@ export const clientsRoutes = new Elysia({ prefix: "/clients" })
         pageSize: t.Optional(t.Number({ minimum: 1, maximum: 100 })),
         search: t.Optional(t.String()),
       }),
+      detail: { tags: ["Clients"], summary: "List clients" },
     },
   )
   .get(
@@ -27,5 +28,6 @@ export const clientsRoutes = new Elysia({ prefix: "/clients" })
     async ({ params }) => success(await clientsService.getById(params.id)),
     {
       params: t.Object({ id: t.String() }),
+      detail: { tags: ["Clients"], summary: "Get a client" },
     },
   );
