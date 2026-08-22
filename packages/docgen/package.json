@@ -1,0 +1,28 @@
+{
+  "name": "@opsora/docgen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "render": "bun src/cli.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "dependencies": {
+    "pdfkit": "0.18.0",
+    "yaml": "2.8.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@opsora/eslint-config": "workspace:*",
+    "@opsora/tsconfig": "workspace:*",
+    "@types/pdfkit": "0.17.4",
+    "eslint": "10.8.1",
+    "typescript": "6.0.3"
+  }
+}

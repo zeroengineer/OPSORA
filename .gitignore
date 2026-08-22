@@ -44,3 +44,8 @@ apps/api/storage/
 
 # Embedded PGlite database (dev stand-in for a Postgres server)
 packages/database/.data/
+
+# Reference PDFs and the legacy per-document generator scripts.
+# Source of truth lives outside the repo; the engine's own fonts and images
+# are committed under packages/docgen/assets/.
+refer/

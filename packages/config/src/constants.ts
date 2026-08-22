@@ -42,6 +42,19 @@ export const ROUTES = {
 export const AUTH_BASE_PATH = "/api/auth";
 
 /**
+ * The single typeface OPSORA uses, everywhere, for everything.
+ *
+ * `ui-monospace` is what actually resolves to SF Mono in browsers on macOS —
+ * the "SF Mono" name alone is not reliably addressable, so it leads and
+ * `ui-monospace` backs it up. Cascadia Mono covers Windows.
+ *
+ * Mirrored as `--font-sans` / `--font-mono` in `apps/web/src/index.css`, which
+ * is CSS-first and cannot import this file. Change both together.
+ */
+export const MONO_FONT_STACK =
+  '"SF Mono", ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", monospace';
+
+/**
  * Shared by the Better Auth server config, the signup form and the reset form,
  * so the three cannot disagree about what a valid password is.
  */

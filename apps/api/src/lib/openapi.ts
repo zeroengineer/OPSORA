@@ -1,6 +1,7 @@
 import type { ElysiaSwaggerConfig } from "@elysiajs/swagger";
 import { auth } from "@opsora/auth";
 import { APP_NAME, AUTH_BASE_PATH } from "@opsora/config";
+import { getServerEnv } from "@opsora/config/server";
 
 type Documentation = NonNullable<ElysiaSwaggerConfig["documentation"]>;
 type Paths = NonNullable<Documentation["paths"]>;
@@ -20,15 +21,62 @@ type GeneratedSecuritySchemes = NonNullable<Components["securitySchemes"]>;
 
 const AUTH_TAG = "Auth";
 
+/**
+ * Rendered as the reference's introduction, above the endpoint list. Markdown —
+ * this is the first thing anyone reads, so it answers "how do I call this?"
+ * rather than restating the title.
+ */
+const INTRODUCTION = `
+Business management platform API — a modular monolith covering clients, sales,
+finance, documents and knowledge.
+
+## Authentication
+
+Every endpoint except \`/health\` and \`/api/auth/*\` requires a session cookie.
+
+To get one from this page, send **\`POST /api/auth/sign-up/email\`** (or
+**\`sign-in/email\`**) below. The browser stores the cookie and every later
+request from this tab carries it automatically — there is no token to copy.
+
+Passwords must be at least 10 characters.
+
+## Responses
+
+Business endpoints return a consistent envelope:
+
+\`\`\`jsonc
+{ "success": true,  "data": { /* ... */ } }
+{ "success": false, "error": { "code": "NOT_FOUND", "message": "..." } }
+\`\`\`
+
+\`/health\` and the file download sit outside it — probes and binaries expect a
+flat body. The \`/api/auth/*\` endpoints use Better Auth's own shapes.
+
+## Modules
+
+Finance, Documents, Document Vault, Dashboard and Search are implemented.
+Clients, Sales and Knowledge Base are specified but return
+\`not-implemented\` until their schemas land.
+`;
+
 const base: Documentation = {
   info: {
     title: `${APP_NAME} API`,
     version: "0.1.0",
-    description:
-      "Business management platform API — a modular monolith over clients, sales, " +
-      "finance, documents and knowledge. Every endpoint outside `/health` and " +
-      "`/api/auth` requires a session cookie.",
+    description: INTRODUCTION,
   },
+  /*
+   * Stated explicitly so the reference shows which host it is calling and the
+   * "Test Request" button targets the right origin. Better Auth's own
+   * `servers` entry is dropped in the merge below — it points at the auth base
+   * path, which would misdirect every other route.
+   */
+  servers: [
+    {
+      url: getServerEnv().BETTER_AUTH_URL,
+      description: "This deployment",
+    },
+  ],
   tags: [
     {
       name: AUTH_TAG,

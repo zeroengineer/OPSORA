@@ -8,6 +8,9 @@
 /* OPSORA design tokens — Tailwind v4 is configured in CSS, not a JS config file.
    Dark, monospace "operator terminal" system per the Claude Design handoff. */
 @theme {
+  /* One typeface for everything. Mirrors MONO_FONT_STACK in
+     packages/config/src/constants.ts — change both together. Tailwind v4 is
+     CSS-first, so this cannot import from TypeScript. */
   --font-sans:
     "SF Mono", ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", monospace;
   --font-mono:
