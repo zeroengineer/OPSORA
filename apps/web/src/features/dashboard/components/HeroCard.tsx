@@ -1,7 +1,6 @@
 import type { DashboardHero, DashboardMetric, DashboardPeriod } from "@opsora/types";
-import { formatCurrency } from "@opsora/utils";
+import { cn, formatCurrency } from "@opsora/utils";
 
-import { Card } from "@/components/common/Card.tsx";
 import { DotMatrixChart } from "@/components/common/DotMatrixChart.tsx";
 import { SegmentedControl } from "@/components/common/SegmentedControl.tsx";
 
@@ -18,6 +17,13 @@ const PERIOD_OPTIONS: { value: DashboardPeriod; label: string }[] = [
   { value: "monthly", label: "Monthly" },
 ];
 
+const CAPTIONS: Record<DashboardMetric, string> = {
+  income: "Income",
+  netProfit: "Net cash flow",
+  expenses: "Expenses",
+  receivables: "Outstanding receivables",
+};
+
 interface HeroCardProps {
   hero: DashboardHero;
   metric: DashboardMetric;
@@ -26,34 +32,96 @@ interface HeroCardProps {
   onPeriodChange: (period: DashboardPeriod) => void;
 }
 
-export function HeroCard({ hero, metric, period, onMetricChange, onPeriodChange }: HeroCardProps) {
-  return (
-    <Card label="Financial year statement" bodyClassName="p-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <SegmentedControl options={METRIC_OPTIONS} value={metric} onChange={onMetricChange} />
-        <SegmentedControl options={PERIOD_OPTIONS} value={period} onChange={onPeriodChange} />
-      </div>
+export function HeroCard({
+  hero,
+  metric,
+  period,
+  onMetricChange,
+  onPeriodChange,
+}: HeroCardProps) {
+  const [from, to] = hero.rangeLabel.split(" → ");
 
-      <div className="mt-8 flex flex-wrap items-end justify-between gap-8">
-        <div>
-          <p className="text-[62px] font-medium leading-none text-ink">
-            {formatCurrency(hero.valueMinor)}
-          </p>
-          <p className="mt-3 text-xs text-mid">
-            {hero.deltaPct === null
-              ? "No prior period to compare"
-              : `${hero.deltaPct >= 0 ? "+" : ""}${hero.deltaPct}% vs previous period`}
-          </p>
+  return (
+    <section className="flex flex-col gap-3.5 rounded-panel border border-line bg-surface-2 px-6 pb-4 pt-[22px]">
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div className="flex flex-col gap-[11px]">
+          <span className="text-[9px] uppercase tracking-[0.18em] text-faint">
+            Financial year statement
+          </span>
+
+          <div className="flex flex-wrap items-center gap-4">
+            {METRIC_OPTIONS.map((option) => {
+              const active = option.value === metric;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    onMetricChange(option.value);
+                  }}
+                  className={cn(
+                    "flex items-center gap-[7px] text-[11px] transition-colors",
+                    active ? "text-ink" : "text-mid hover:text-ink",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "size-[9px] shrink-0 rounded-full",
+                      active
+                        ? "bg-red shadow-[inset_0_0_0_1px_var(--color-red)]"
+                        : "shadow-[inset_0_0_0_1px_var(--color-faint)]",
+                    )}
+                  />
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <DotMatrixChart series={hero.series} height="lg" className="mb-1" />
+        <div className="flex flex-col items-end gap-[11px]">
+          <span className="text-[9px] uppercase tracking-[0.18em] text-faint">
+            {period}
+          </span>
+          <SegmentedControl
+            label="Chart period"
+            options={PERIOD_OPTIONS}
+            value={period}
+            onChange={onPeriodChange}
+          />
+        </div>
       </div>
 
-      {hero.rangeLabel && (
-        <p className="mt-6 border-t border-line-2 pt-3 text-[10px] uppercase tracking-[0.14em] text-faint">
-          {hero.rangeLabel}
+      <div className="flex flex-col items-center gap-1.5 pb-0.5 pt-1.5">
+        <span className="text-[clamp(38px,7vw,62px)] font-medium leading-none tracking-[-0.045em] text-ink">
+          {formatCurrency(hero.valueMinor)}
+        </span>
+        <div className="flex items-center gap-2.5">
+          <span className="text-[10.5px] text-mid">{CAPTIONS[metric]}</span>
+          {hero.deltaPct !== null && (
+            <span className="text-[10.5px] text-red">
+              {hero.deltaPct >= 0 ? "+" : ""}
+              {hero.deltaPct}%
+            </span>
+          )}
+        </div>
+      </div>
+
+      {hero.series.length > 0 ? (
+        <>
+          <DotMatrixChart series={hero.series} className="h-[150px]" />
+          <div className="flex justify-between border-t border-line-2 pt-2.5 text-[9.5px] text-faint">
+            <span>{from}</span>
+            <span className="text-ink">{to}</span>
+          </div>
+        </>
+      ) : (
+        <p className="flex h-[150px] items-center justify-center text-[11px] uppercase tracking-[0.12em] text-faint">
+          No transactions in this range yet
         </p>
       )}
-    </Card>
+    </section>
   );
 }

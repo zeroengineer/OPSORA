@@ -1,3 +1,4 @@
+import { MIN_PASSWORD_LENGTH, ROUTES } from "@opsora/config";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
@@ -17,8 +18,8 @@ export function SignupPage() {
     event.preventDefault();
     setError(null);
 
-    if (password.length < 10) {
-      setError("Password must be at least 10 characters");
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`Use at least ${String(MIN_PASSWORD_LENGTH)} characters for the password.`);
       return;
     }
 
@@ -27,17 +28,17 @@ export function SignupPage() {
 
     setSubmitting(false);
     if (signUpError) {
-      setError(signUpError.message ?? "Sign up failed");
+      setError(signUpError.message ?? "That account could not be created.");
       return;
     }
 
-    void navigate("/", { replace: true });
+    void navigate(ROUTES.dashboard, { replace: true });
   }
 
   return (
     <AuthLayout
       title="Create your workspace"
-      subtitle="Set up once, run the company from it."
+      subtitle="Free while you set things up. No card needed."
       pitch="Set up your workspace once. Run the whole company from it."
       points={[
         "Finance ledger ready from day one",
@@ -45,7 +46,7 @@ export function SignupPage() {
         "New modules ship into the same workspace",
       ]}
     >
-      <form onSubmit={(e) => void handleSubmit(e)} className="flex flex-col gap-4">
+      <form onSubmit={(e) => void handleSubmit(e)} className="flex flex-col gap-3">
         <AuthField
           id="name"
           label="Your name"
@@ -76,17 +77,17 @@ export function SignupPage() {
           label="Password"
           type="password"
           autoComplete="new-password"
-          placeholder="At least 10 characters"
+          placeholder={`At least ${String(MIN_PASSWORD_LENGTH)} characters`}
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
           }}
           required
-          minLength={10}
+          minLength={MIN_PASSWORD_LENGTH}
         />
 
         {error && (
-          <p className="rounded-input border border-line bg-red-soft px-3 py-2 text-xs text-ink">
+          <p className="rounded-input border border-red bg-red-soft px-3 py-2 text-[11px] text-ink">
             {error}
           </p>
         )}
@@ -94,15 +95,15 @@ export function SignupPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded-pill bg-red px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85 disabled:opacity-50"
+          className="mt-1 rounded-pill bg-red py-3.5 text-[11.5px] uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-85 disabled:opacity-50"
         >
           {submitting ? "Creating account…" : "Create account"}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-xs text-mid">
-        Already have a workspace?{" "}
-        <Link to="/login" className="text-red hover:underline">
+      <p className="flex justify-center gap-2 text-[11px] text-mid">
+        Already have a workspace?
+        <Link to={ROUTES.login} className="text-red hover:underline">
           Sign in
         </Link>
       </p>

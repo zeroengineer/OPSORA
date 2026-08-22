@@ -11,7 +11,8 @@ interface UiState {
 
 /** Ephemeral client-side UI state. Server data belongs in TanStack Query. */
 export const useUiStore = create<UiState>((set) => ({
-  sidebarOpen: true,
+  /** Drawer state below `lg` only — from `lg` up the sidebar is always shown. */
+  sidebarOpen: false,
   toggleSidebar: () => {
     set((state) => ({ sidebarOpen: !state.sidebarOpen }));
   },

@@ -7,7 +7,19 @@ import { z } from "zod";
  * `import.meta.env` in `apps/web` instead. Parsing is lazy so that
  * importing the package (for types, or from tooling) does not require
  * a fully configured environment.
+ *
+ * `DATABASE_URL` accepts three forms:
+ *   - `postgres://…` / `postgresql://…` — a real Postgres server
+ *   - `file:./.data/pglite`             — embedded PGlite, persisted to disk
+ *   - `memory://`                       — embedded PGlite, discarded on exit
  */
+
+/**
+ * Embedded PGlite under `packages/database/`. Development-only — the guard
+ * below refuses to let it through in production.
+ */
+export const DEFAULT_DATABASE_URL = "file:./.data/pglite";
+
 const serverEnvSchema = z.object({
   NODE_ENV: z
     .enum(["development", "test", "production"])
@@ -16,7 +28,7 @@ const serverEnvSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   WEB_ORIGIN: z.url().default("http://localhost:5173"),
 
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  DATABASE_URL: z.string().min(1).default(DEFAULT_DATABASE_URL),
 
   BETTER_AUTH_SECRET: z
     .string()
@@ -27,6 +39,15 @@ const serverEnvSchema = z.object({
   R2_ACCESS_KEY_ID: z.string().optional(),
   R2_SECRET_ACCESS_KEY: z.string().optional(),
   R2_ENDPOINT: z.url().optional(),
+}).superRefine((value, ctx) => {
+  if (value.NODE_ENV === "production" && value.DATABASE_URL === DEFAULT_DATABASE_URL) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["DATABASE_URL"],
+      message:
+        "must be set explicitly in production — the embedded PGlite default is development-only",
+    });
+  }
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

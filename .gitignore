@@ -41,3 +41,6 @@ coverage/
 
 # Local document storage (dev stand-in for R2)
 apps/api/storage/
+
+# Embedded PGlite database (dev stand-in for a Postgres server)
+packages/database/.data/

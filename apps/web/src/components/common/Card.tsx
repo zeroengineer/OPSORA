@@ -1,29 +1,44 @@
 import type { ReactNode } from "react";
 
 import { cn } from "@opsora/utils";
+import { StatusDot } from "@/components/common/StatusDot.tsx";
 
 interface CardProps {
   label?: string;
+  /** Prefix the label with the accent dot, marking the panel as a signal. */
+  accent?: boolean;
   actions?: ReactNode;
   children: ReactNode;
   className?: string;
   bodyClassName?: string;
 }
 
-/** Surface-2 panel with the recurring accent-dot + uppercase-label header row. */
-export function Card({ label, actions, children, className, bodyClassName }: CardProps) {
+/** Surface-2 panel with the recurring uppercase-label header row. */
+export function Card({
+  label,
+  accent = false,
+  actions,
+  children,
+  className,
+  bodyClassName,
+}: CardProps) {
   return (
-    <div className={cn("rounded-card border border-line bg-surface-2", className)}>
+    <div
+      className={cn(
+        "flex flex-col rounded-card border border-line bg-surface-2",
+        className,
+      )}
+    >
       {label && (
-        <div className="flex items-center gap-2 border-b border-line-2 px-4 py-3">
-          <span className="size-[5px] rounded-full bg-red" />
-          <span className="text-[10px] uppercase tracking-[0.14em] text-faint">
+        <div className="flex shrink-0 items-center gap-2 border-b border-line-2 px-[18px] pb-[11px] pt-[15px]">
+          {accent && <StatusDot tone="red" />}
+          <span className="text-[9px] uppercase tracking-[0.16em] text-mid">
             {label}
           </span>
           {actions && <div className="ml-auto">{actions}</div>}
         </div>
       )}
-      <div className={bodyClassName}>{children}</div>
+      <div className={cn("min-h-0", bodyClassName)}>{children}</div>
     </div>
   );
 }

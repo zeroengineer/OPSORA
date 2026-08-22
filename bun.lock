@@ -64,6 +64,7 @@
       "dependencies": {
         "@opsora/config": "workspace:*",
         "@opsora/database": "workspace:*",
+        "@opsora/utils": "workspace:*",
         "better-auth": "1.7.1",
       },
       "devDependencies": {
@@ -98,6 +99,7 @@
       "name": "@opsora/database",
       "version": "0.1.0",
       "dependencies": {
+        "@electric-sql/pglite": "0.5.5",
         "@opsora/config": "workspace:*",
         "drizzle-orm": "0.45.2",
         "pg": "8.23.0",
@@ -208,6 +210,8 @@
     "@borewit/text-codec": ["@borewit/text-codec@0.2.2", "", {}, "sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ=="],
 
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
+
+    "@electric-sql/pglite": ["@electric-sql/pglite@0.5.5", "", {}, "sha512-QeZ+oB7QaU4EJj2awrB8hwFZ5TXxLRBQ9Gfq0dQauYDdWsRtuWRCERgtri35vRfL07KQHlVlc/4Qxvn7a5AXeA=="],
 
     "@elysiajs/cors": ["@elysiajs/cors@1.4.2", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-FTCcbH35brTLigF1W7BYySRZomgI/dBEMK9BgK9RP9Nez7zmpGh4koL/Yr1BFv8nYz7CfhRvcM8d/c+XnwMaVQ=="],
 

@@ -1,3 +1,5 @@
+import { StatusDot } from "@/components/common/StatusDot.tsx";
+
 interface ErrorStateProps {
   title?: string;
   message: string;
@@ -10,14 +12,19 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div className="rounded-card border border-line bg-red-soft p-4 text-sm text-ink">
-      <p className="font-medium">{title}</p>
-      <p className="mt-1 text-mid">{message}</p>
+    <div className="flex flex-col items-start gap-2 rounded-card border border-red bg-red-soft px-4 py-3.5">
+      <div className="flex items-center gap-2.5">
+        <StatusDot tone="red" size={6} />
+        <p className="text-[9px] uppercase tracking-[0.16em] text-red">{title}</p>
+      </div>
+
+      <p className="text-[12.5px] text-ink text-pretty">{message}</p>
+
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 rounded-control border border-line px-3 py-1.5 font-medium text-ink hover:bg-surface-2"
+          className="mt-1 rounded-control border border-line px-3 py-1.5 text-[9.5px] uppercase tracking-[0.14em] text-ink transition-colors hover:border-red"
         >
           Try again
         </button>

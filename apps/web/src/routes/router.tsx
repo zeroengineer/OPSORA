@@ -8,9 +8,15 @@ import { createBrowserRouter } from "react-router";
 import { AppLayout } from "@/components/layout/AppLayout.tsx";
 import { RequireAuth } from "@/components/layout/RequireAuth.tsx";
 import { DashboardPage } from "@/features/dashboard/index.ts";
-import { LoginPage, SignupPage } from "@/features/auth/index.ts";
+import { LandingPage } from "@/features/marketing/index.ts";
+import {
+  ForgotPasswordPage,
+  LoginPage,
+  ResetPasswordPage,
+  SignupPage,
+} from "@/features/auth/index.ts";
 
-// Feature routes are code-split; the dashboard and auth pages ship eagerly.
+// Feature routes are code-split; the landing, auth and dashboard pages ship eagerly.
 const ClientsPage = lazy(() => import("@/features/clients/pages/ClientsPage.tsx"));
 const SalesPage = lazy(() => import("@/features/sales/pages/SalesPage.tsx"));
 const InvoicesPage = lazy(() => import("@/features/invoices/pages/InvoicesPage.tsx"));
@@ -33,16 +39,19 @@ const ActivityHistoryPage = lazy(
 );
 
 export const router = createBrowserRouter([
+  { path: ROUTES.home, Component: LandingPage },
   { path: ROUTES.login, Component: LoginPage },
   { path: ROUTES.signup, Component: SignupPage },
+  // Public by necessity: someone resetting a password has no session.
+  { path: ROUTES.forgotPassword, Component: ForgotPasswordPage },
+  { path: ROUTES.resetPassword, Component: ResetPasswordPage },
   {
     Component: RequireAuth,
     children: [
       {
-        path: "/",
         Component: AppLayout,
         children: [
-          { index: true, Component: DashboardPage },
+          { path: ROUTES.dashboard, Component: DashboardPage },
           { path: ROUTES.clients, Component: ClientsPage },
           { path: ROUTES.sales, Component: SalesPage },
           { path: ROUTES.invoices, Component: InvoicesPage },

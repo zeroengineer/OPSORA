@@ -1,9 +1,11 @@
 import { Elysia, t } from "elysia";
 
+import { apiResponse, paginated } from "@/lib/api-schema.ts";
 import { success } from "@/lib/response.ts";
 import { requireAuth } from "@/middleware/require-auth.ts";
 
 import { financeService } from "./finance.service.ts";
+import { ledgerSummarySchema, transactionSchema } from "./finance.schema.ts";
 
 export const financeRoutes = new Elysia({ prefix: "/finance" })
   .use(requireAuth)
@@ -18,6 +20,7 @@ export const financeRoutes = new Elysia({ prefix: "/finance" })
         page: t.Optional(t.Number({ minimum: 1 })),
         pageSize: t.Optional(t.Number({ minimum: 1, maximum: 100 })),
       }),
+      response: apiResponse(paginated(transactionSchema)),
       detail: { tags: ["Finance"], summary: "List ledger transactions" },
     },
   )
@@ -28,6 +31,7 @@ export const financeRoutes = new Elysia({ prefix: "/finance" })
       query: t.Object({
         month: t.Optional(t.String({ pattern: "^\\d{4}-\\d{2}$" })),
       }),
+      response: apiResponse(ledgerSummarySchema),
       detail: { tags: ["Finance"], summary: "Ledger opening/closing balance summary" },
     },
   )
@@ -42,6 +46,7 @@ export const financeRoutes = new Elysia({ prefix: "/finance" })
         amountMinor: t.Number({ minimum: 1 }),
         occurredOn: t.String({ format: "date" }),
       }),
+      response: apiResponse(transactionSchema),
       detail: { tags: ["Finance"], summary: "Record a transaction" },
     },
   );

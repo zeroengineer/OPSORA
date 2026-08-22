@@ -1,37 +1,40 @@
-interface ModuleStubProps {
-  index: number;
-  total: number;
-  title: string;
-  description: string;
-}
+
+import { StatusDot } from "@/components/common/StatusDot.tsx";
+import { MODULE_COUNT, MODULES, moduleByRoute } from "@/lib/modules.ts";
 
 /**
- * Restyled version of the mockup's own "not yet designed" placeholder —
- * used for every nav item that isn't one of the four screens actually
- * built out (Dashboard, Finance Ledger, Documents, Document Vault).
+ * Placeholder for a module that is specified but not built. The dot row is a
+ * position indicator, not decoration: it shows where this module sits in the
+ * platform's eleven, which one you are looking at, and which are already live.
  */
-export function ModuleStub({ index, total, title, description }: ModuleStubProps) {
+export function ModuleStub({ route }: { route: string }) {
+  const module = moduleByRoute(route);
+  if (!module) return null;
+
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
-      <div className="flex items-center gap-1.5">
-        {Array.from({ length: total }, (_, i) => (
-          <span
-            key={i}
-            className={
-              "size-1.5 rounded-full " +
-              (i === index - 1 ? "bg-red" : "bg-dot-off")
+    <div className="flex flex-1 flex-col items-center justify-center gap-[18px] px-[30px] py-[70px] text-center">
+      <div className="flex gap-[5px]">
+        {MODULES.map((entry) => (
+          <StatusDot
+            key={entry.ordinal}
+            size={6}
+            tone={
+              entry.ordinal === module.ordinal ? "red" : entry.live ? "faint" : "off"
             }
           />
         ))}
       </div>
 
       <p className="text-[10px] uppercase tracking-[0.2em] text-faint">
-        Module {index}/{total} · Specified, not yet designed
+        Module {String(module.ordinal).padStart(2, "0")} of {MODULE_COUNT} · specified,
+        not yet built
       </p>
 
-      <h1 className="text-2xl font-medium text-ink">{title}</h1>
+      <h1 className="text-2xl font-semibold text-ink">{module.title}</h1>
 
-      <p className="max-w-md text-sm leading-relaxed text-mid">{description}</p>
+      <p className="max-w-[440px] text-[13px] leading-[1.6] text-mid text-pretty">
+        {module.description}
+      </p>
     </div>
   );
 }

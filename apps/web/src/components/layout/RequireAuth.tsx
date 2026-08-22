@@ -1,4 +1,5 @@
-import { Navigate, Outlet } from "react-router";
+import { ROUTES } from "@opsora/config";
+import { Navigate, Outlet, useLocation } from "react-router";
 
 import { Spinner } from "@/components/common/Spinner.tsx";
 import { useSession } from "@/lib/auth-client.ts";
@@ -6,6 +7,7 @@ import { useSession } from "@/lib/auth-client.ts";
 /** Redirects to /login when there is no active session. */
 export function RequireAuth() {
   const { data: session, isPending } = useSession();
+  const location = useLocation();
 
   if (isPending) {
     return (
@@ -16,7 +18,8 @@ export function RequireAuth() {
   }
 
   if (!session) {
-    return <Navigate to="/login" replace />;
+    // Carry the attempted path so a sign-in can return the user to it.
+    return <Navigate to={ROUTES.login} replace state={{ from: location.pathname }} />;
   }
 
   return <Outlet />;

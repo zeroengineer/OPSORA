@@ -1,49 +1,58 @@
 import { Pill } from "@/components/common/Pill.tsx";
 
-const CATEGORIES = [
-  "All",
-  "Proposals",
-  "Quotations",
-  "Invoices",
-  "Agreements",
-  "MOUs",
-  "Certificates",
-  "Policies",
-  "Internal",
-];
-
 interface VaultFiltersProps {
   search: string;
   onSearchChange: (value: string) => void;
   category: string;
   onCategoryChange: (category: string) => void;
+  /** Categories present in the vault, derived from the documents themselves. */
+  categories: string[];
 }
 
-export function VaultFilters({ search, onSearchChange, category, onCategoryChange }: VaultFiltersProps) {
+export function VaultFilters({
+  search,
+  onSearchChange,
+  category,
+  onCategoryChange,
+  categories,
+}: VaultFiltersProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <input
-        value={search}
-        onChange={(e) => {
-          onSearchChange(e.target.value);
-        }}
-        placeholder="Search by document name or client"
-        className="rounded-input border border-line bg-surface-2 px-3 py-2 text-sm text-ink outline-none placeholder:text-faint focus:border-red"
-      />
+    <div className="flex shrink-0 flex-col gap-3 border-b border-line bg-surface px-6 py-4">
+      <label>
+        <span className="sr-only">Search the vault</span>
+        <input
+          value={search}
+          onChange={(e) => {
+            onSearchChange(e.target.value);
+          }}
+          placeholder="Search by document name, client or category"
+          className="w-full rounded-control border border-line bg-surface-2 px-3 py-2.5 text-[11.5px] text-ink outline-none placeholder:text-faint focus:border-red"
+        />
+      </label>
 
-      <div className="flex flex-wrap gap-1.5">
-        {CATEGORIES.map((c) => (
+      {categories.length > 0 && (
+        <div className="flex flex-wrap gap-0.5">
           <Pill
-            key={c}
-            active={c === "All" ? category === "" : category === c}
+            active={category === ""}
             onClick={() => {
-              onCategoryChange(c === "All" ? "" : c);
+              onCategoryChange("");
             }}
           >
-            {c}
+            All
           </Pill>
-        ))}
-      </div>
+          {categories.map((c) => (
+            <Pill
+              key={c}
+              active={category === c}
+              onClick={() => {
+                onCategoryChange(c);
+              }}
+            >
+              {c}
+            </Pill>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

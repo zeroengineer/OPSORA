@@ -1,51 +1,78 @@
 import type { TransactionDto } from "@opsora/types";
-import { formatCurrency, formatDate } from "@opsora/utils";
+import { cn, formatCurrency } from "@opsora/utils";
 
 import { EmptyState } from "@/components/common/EmptyState.tsx";
 import { StatusDot } from "@/components/common/StatusDot.tsx";
 
+const GRID = "grid grid-cols-[76px_1fr_110px_110px] sm:grid-cols-[96px_1fr_150px_130px_130px]";
+
+/** Ledger dates are read down a column, so they drop the year and the month name. */
+function ledgerDate(value: string): string {
+  const [, month = "", day = ""] = value.split("-");
+  return `${month} / ${day}`;
+}
+
 export function TransactionTable({ transactions }: { transactions: TransactionDto[] }) {
   if (transactions.length === 0) {
     return (
-      <div className="rounded-card border border-line bg-surface-2">
-        <EmptyState
-          label="No transactions yet"
-          hint="Use “+ Record entry” to add the first one."
-        />
-      </div>
+      <EmptyState
+        label="No transactions yet"
+        hint="Record the first entry and the running balance starts here."
+      />
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-card border border-line bg-surface-2">
-      <div className="grid min-w-[640px] grid-cols-[100px_1fr_140px_120px_140px] gap-2 border-b border-line-2 px-4 py-2.5 text-[10px] uppercase tracking-[0.12em] text-faint">
+    <div className="overflow-x-auto">
+      <div
+        className={cn(
+          GRID,
+          "min-w-[560px] border-b border-line px-[18px] py-[11px] text-[8.5px] uppercase tracking-[0.16em] text-faint",
+        )}
+      >
         <span>Date</span>
         <span>Description</span>
-        <span>Category</span>
+        <span className="hidden sm:block">Category</span>
         <span className="text-right">Amount</span>
         <span className="text-right">Balance</span>
       </div>
 
-      <div className="divide-y divide-line-2">
-        {transactions.map((tx) => (
-          <div
-            key={tx.id}
-            className="grid min-w-[640px] grid-cols-[100px_1fr_140px_120px_140px] items-center gap-2 px-4 py-3 text-sm hover:bg-surface"
+      {transactions.map((tx) => (
+        <div
+          key={tx.id}
+          className={cn(
+            GRID,
+            "min-w-[560px] items-center border-b border-line-2 px-[18px] py-3.5 hover:bg-surface-2",
+          )}
+        >
+          <span className="text-[11px] text-mid tabular-nums">
+            {ledgerDate(tx.occurredOn)}
+          </span>
+
+          <span className="flex min-w-0 items-center gap-2.5 pr-4 text-[12.5px] text-ink">
+            <StatusDot tone={tx.type === "in" ? "ink" : "red"} />
+            <span className="truncate">{tx.description}</span>
+          </span>
+
+          <span className="hidden truncate pr-2 text-[10px] uppercase tracking-[0.08em] text-mid sm:block">
+            {tx.category}
+          </span>
+
+          <span
+            className={cn(
+              "text-right text-[12.5px] tabular-nums",
+              tx.type === "in" ? "text-ink" : "text-red",
+            )}
           >
-            <span className="text-xs text-faint">{formatDate(tx.occurredOn)}</span>
-            <span className="flex items-center gap-2 text-ink">
-              <StatusDot tone={tx.type === "in" ? "ink" : "red"} />
-              {tx.description}
-            </span>
-            <span className="text-xs text-mid">{tx.category}</span>
-            <span className={`text-right ${tx.type === "in" ? "text-ink" : "text-red"}`}>
-              {tx.type === "in" ? "+" : "-"}
-              {formatCurrency(tx.amountMinor)}
-            </span>
-            <span className="text-right text-faint">{formatCurrency(tx.runningBalanceMinor)}</span>
-          </div>
-        ))}
-      </div>
+            {tx.type === "in" ? "+" : "−"}
+            {formatCurrency(tx.amountMinor)}
+          </span>
+
+          <span className="text-right text-xs text-mid tabular-nums">
+            {formatCurrency(tx.runningBalanceMinor)}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }

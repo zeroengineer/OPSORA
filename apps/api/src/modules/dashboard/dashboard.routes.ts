@@ -1,9 +1,11 @@
 import { Elysia, t } from "elysia";
 
+import { apiResponse } from "@/lib/api-schema.ts";
 import { success } from "@/lib/response.ts";
 import { requireAuth } from "@/middleware/require-auth.ts";
 
 import { dashboardService } from "./dashboard.service.ts";
+import { dashboardSchema } from "./dashboard.schema.ts";
 
 export const dashboardRoutes = new Elysia({ prefix: "/dashboard" })
   .use(requireAuth)
@@ -24,6 +26,7 @@ export const dashboardRoutes = new Elysia({ prefix: "/dashboard" })
           t.Union([t.Literal("daily"), t.Literal("weekly"), t.Literal("monthly")]),
         ),
       }),
+      response: apiResponse(dashboardSchema),
       detail: { tags: ["Dashboard"], summary: "Aggregated dashboard data" },
     },
   );

@@ -1,4 +1,5 @@
 export * from "./format.ts";
+export * from "./logger.ts";
 export * from "./pagination.ts";
 export * from "./result.ts";
 export * from "./string.ts";

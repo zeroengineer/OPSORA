@@ -1,10 +1,12 @@
 import { Elysia, t } from "elysia";
 
+import { apiResponse } from "@/lib/api-schema.ts";
 import { success } from "@/lib/response.ts";
 import { requireAuth } from "@/middleware/require-auth.ts";
 
 import { documentTemplatesService } from "./document-templates.service.ts";
 import { documentVaultService } from "./document-vault.service.ts";
+import { templateSchema, vaultFileSchema } from "./documents.schema.ts";
 
 export const documentsRoutes = new Elysia({ prefix: "/documents" })
   .use(requireAuth)
@@ -13,13 +15,17 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
   .get(
     "/templates",
     async () => success(await documentTemplatesService.list()),
-    { detail: { tags: ["Documents"], summary: "List document templates" } },
+    {
+      response: apiResponse(t.Array(templateSchema)),
+      detail: { tags: ["Documents"], summary: "List document templates" },
+    },
   )
   .get(
     "/templates/:id",
     async ({ params }) => success(await documentTemplatesService.getById(params.id)),
     {
       params: t.Object({ id: t.String() }),
+      response: apiResponse(templateSchema),
       detail: { tags: ["Documents"], summary: "Get a document template" },
     },
   )
@@ -32,6 +38,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
         category: t.String({ minLength: 1, maxLength: 100 }),
         body: t.String({ minLength: 1 }),
       }),
+      response: apiResponse(templateSchema),
       detail: { tags: ["Documents"], summary: "Create a document template" },
     },
   )
@@ -45,6 +52,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
         category: t.Optional(t.String({ minLength: 1, maxLength: 100 })),
         body: t.Optional(t.String({ minLength: 1 })),
       }),
+      response: apiResponse(templateSchema),
       detail: {
         tags: ["Documents"],
         summary: "Update a document template (bumps its version)",
@@ -61,6 +69,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
         search: t.Optional(t.String()),
         category: t.Optional(t.String()),
       }),
+      response: apiResponse(t.Array(vaultFileSchema)),
       detail: { tags: ["Document Vault"], summary: "List vault documents" },
     },
   )
@@ -69,6 +78,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
     async ({ params }) => success(await documentVaultService.getById(params.id)),
     {
       params: t.Object({ id: t.String() }),
+      response: apiResponse(vaultFileSchema),
       detail: { tags: ["Document Vault"], summary: "Get a vault document with version history" },
     },
   )
@@ -82,7 +92,25 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
     },
     {
       params: t.Object({ id: t.String() }),
-      detail: { tags: ["Document Vault"], summary: "Download a vault document" },
+      /*
+       * No `response` schema: this returns raw bytes, and declaring one would
+       * make Elysia validate a Buffer against JSON. Documented by hand instead,
+       * which Scalar renders without enforcing anything at runtime.
+       */
+      detail: {
+        tags: ["Document Vault"],
+        summary: "Download a vault document",
+        responses: {
+          200: {
+            description: "The stored file",
+            content: {
+              "application/octet-stream": {
+                schema: { type: "string", format: "binary" },
+              },
+            },
+          },
+        },
+      },
     },
   )
   .post(
@@ -96,6 +124,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
         clientName: t.Optional(t.String({ maxLength: 200 })),
         variables: t.Record(t.String(), t.String()),
       }),
+      response: apiResponse(vaultFileSchema),
       detail: { tags: ["Document Vault"], summary: "Generate a document from a template" },
     },
   )
@@ -106,6 +135,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
     {
       params: t.Object({ id: t.String() }),
       body: t.Object({ variables: t.Record(t.String(), t.String()) }),
+      response: apiResponse(vaultFileSchema),
       detail: { tags: ["Document Vault"], summary: "Regenerate a document with updated variables" },
     },
   )
@@ -119,6 +149,7 @@ export const documentsRoutes = new Elysia({ prefix: "/documents" })
         category: t.String({ minLength: 1 }),
         clientName: t.Optional(t.String()),
       }),
+      response: apiResponse(vaultFileSchema),
       detail: { tags: ["Document Vault"], summary: "Upload a document" },
     },
   );

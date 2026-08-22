@@ -1,4 +1,11 @@
-export { closeDatabase, db, type Database } from "./client.ts";
+export {
+  closeDatabase,
+  databaseTarget,
+  db,
+  migrateDatabase,
+  type Database,
+} from "./client.ts";
+export { resolveDatabaseTarget, type DatabaseTarget } from "./target.ts";
 export * as schema from "./schema/index.ts";
 export * from "./schema/index.ts";
 

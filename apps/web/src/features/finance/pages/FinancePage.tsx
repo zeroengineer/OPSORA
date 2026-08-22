@@ -1,4 +1,5 @@
 import type { TransactionType } from "@opsora/types";
+import { formatCurrency } from "@opsora/utils";
 import { useMemo, useState } from "react";
 
 import { ErrorState } from "@/components/common/ErrorState.tsx";
@@ -36,41 +37,60 @@ export function FinancePage() {
   }
 
   if (summaryQuery.isError || transactionsQuery.isError) {
-    return <ErrorState message="Failed to load the ledger" />;
-  }
-
-  const transactions = transactionsQuery.data.items;
-  const meta = transactionsQuery.data.meta;
-
-  return (
-    <div className="flex flex-col gap-4">
-      <LedgerStatStrip summary={summaryQuery.data} />
-
-      <TransactionToolbar
-        type={type}
-        onTypeChange={setType}
-        search={search}
-        onSearchChange={setSearch}
-        addOpen={addOpen}
-        onToggleAdd={() => {
-          setAddOpen((open) => !open);
-        }}
-      />
-
-      {addOpen && (
-        <AddTransactionForm
-          categories={categories}
-          onDone={() => {
-            setAddOpen(false);
+    return (
+      <div className="px-[30px] py-[26px]">
+        <ErrorState
+          message="Failed to load the ledger"
+          onRetry={() => {
+            void summaryQuery.refetch();
+            void transactionsQuery.refetch();
           }}
         />
-      )}
+      </div>
+    );
+  }
 
-      <TransactionTable transactions={transactions} />
+  const summary = summaryQuery.data;
+  const transactions = transactionsQuery.data.items;
+  const total = transactionsQuery.data.meta.total;
 
-      <p className="text-[10px] uppercase tracking-[0.12em] text-faint">
-        {meta.total} transaction{meta.total === 1 ? "" : "s"}
-      </p>
+  return (
+    <div className="flex flex-col gap-4 px-4 pb-14 pt-[26px] sm:px-[30px]">
+      <LedgerStatStrip summary={summary} />
+
+      <div className="rounded-card border border-line bg-surface">
+        <TransactionToolbar
+          type={type}
+          onTypeChange={setType}
+          search={search}
+          onSearchChange={setSearch}
+          addOpen={addOpen}
+          onToggleAdd={() => {
+            setAddOpen((open) => !open);
+          }}
+        />
+
+        {addOpen && (
+          <AddTransactionForm
+            categories={categories}
+            onDone={() => {
+              setAddOpen(false);
+            }}
+          />
+        )}
+
+        <TransactionTable transactions={transactions} />
+
+        <div className="flex flex-wrap justify-between gap-2 px-[18px] py-3.5 text-[10px] uppercase tracking-[0.08em] text-faint">
+          <span>
+            {total} transaction{total === 1 ? "" : "s"}
+          </span>
+          <span>
+            Opening {formatCurrency(summary.openingBalanceMinor)} → closing{" "}
+            {formatCurrency(summary.closingBalanceMinor)}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

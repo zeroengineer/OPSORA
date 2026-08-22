@@ -126,16 +126,6 @@ export const documentVaultService = {
     const template = await documentTemplatesRepository.findById(existing.sourceTemplateId);
     if (!template) throw HttpError.notFound("Source template no longer exists");
 
-    // Snapshot the current (pre-overwrite) version into history first.
-    await documentVaultRepository.insertVersion({
-      documentFileId: id,
-      version: existing.currentVersion,
-      description: `Version ${existing.currentVersion}`,
-      storageKey: existing.storageKey,
-      sizeBytes: existing.sizeBytes,
-      createdBy: existing.createdBy,
-    });
-
     const rendered = renderTemplate(template.body, input.variables);
     const buffer = Buffer.from(rendered, "utf-8");
     const nextVersion = existing.currentVersion + 1;
@@ -150,6 +140,18 @@ export const documentVaultService = {
       variablesUsed: input.variables,
     });
     if (!row) throw HttpError.notFound(`Document ${id} was not found`);
+
+    // Record the version just produced, mirroring generateFromTemplate. The
+    // prior version already wrote its own history row when it was created, so
+    // snapshotting it here would duplicate it.
+    await documentVaultRepository.insertVersion({
+      documentFileId: id,
+      version: nextVersion,
+      description: "Regenerated from template",
+      storageKey,
+      sizeBytes: buffer.byteLength,
+      createdBy: userId,
+    });
 
     const versions = await documentVaultRepository.versionsFor(id);
     return toDto(row, versions);

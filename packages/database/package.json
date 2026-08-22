@@ -18,6 +18,7 @@
     "clean": "rm -rf .turbo node_modules"
   },
   "dependencies": {
+    "@electric-sql/pglite": "0.5.5",
     "@opsora/config": "workspace:*",
     "drizzle-orm": "0.45.2",
     "pg": "8.23.0"

@@ -16,6 +16,7 @@
   "dependencies": {
     "@opsora/config": "workspace:*",
     "@opsora/database": "workspace:*",
+    "@opsora/utils": "workspace:*",
     "better-auth": "1.7.1"
   },
   "devDependencies": {

@@ -1,28 +1,16 @@
-import { cn } from "@opsora/utils";
-
 interface PreviewPanelProps {
   html: string;
-  unfilledCount: number;
 }
 
-export function PreviewPanel({ html, unfilledCount }: PreviewPanelProps) {
+/**
+ * The generated document, shown as a sheet floating on the panel ground —
+ * the one place in the app where the surface reads as paper rather than UI.
+ */
+export function PreviewPanel({ html }: PreviewPanelProps) {
   return (
-    <div>
-      <p
-        className={cn(
-          "mb-4 text-[10px] uppercase tracking-[0.12em]",
-          unfilledCount > 0 ? "text-red" : "text-mid",
-        )}
-      >
-        {unfilledCount > 0
-          ? `${unfilledCount} variable${unfilledCount === 1 ? "" : "s"} empty`
-          : "All variables filled"}
-      </p>
-
-      <div
-        className="prose-doc text-sm leading-relaxed text-ink"
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
-    </div>
+    <div
+      className="prose-doc min-h-[420px] rounded-badge border border-line bg-surface px-8 py-[34px] shadow-[0_1px_0_var(--color-line)]"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }

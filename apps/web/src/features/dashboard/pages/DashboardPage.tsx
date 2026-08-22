@@ -25,15 +25,17 @@ export function DashboardPage() {
 
   if (isError) {
     return (
-      <ErrorState
-        message={error instanceof Error ? error.message : "Failed to load the dashboard"}
-        onRetry={() => void refetch()}
-      />
+      <div className="px-[26px] py-[22px]">
+        <ErrorState
+          message={error instanceof Error ? error.message : "Failed to load the dashboard"}
+          onRetry={() => void refetch()}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3.5 px-4 pb-14 pt-[22px] sm:px-[26px]">
       <HeroCard
         hero={data.hero}
         metric={metric}
@@ -42,27 +44,28 @@ export function DashboardPage() {
         onPeriodChange={setPeriod}
       />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
         {data.kpis.map((kpi) => (
           <KpiCard key={kpi.key} kpi={kpi} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-[1.15fr_1fr_1fr]">
         <EmptyPanel
           label="Business alerts"
+          accent
           emptyLabel="No alerts yet"
-          hint="Alerts surface once invoices and deals are tracked."
+          hint="Overdue invoices, upcoming due dates and expiring documents surface here once those modules ship."
         />
         <EmptyPanel
           label="Receivables / payables"
           emptyLabel="Nothing outstanding"
-          hint="Populates once invoicing is tracked."
+          hint="Money owed to you and by you, once invoicing is tracked."
         />
         <EmptyPanel
           label="Upcoming dates"
           emptyLabel="Nothing scheduled"
-          hint="Populates once deals and invoices are tracked."
+          hint="Payment dates, expected deal closes and renewal dates."
         />
       </div>
 

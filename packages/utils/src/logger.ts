@@ -1,3 +1,15 @@
+/*
+ * `console` is a host API, not part of ES2023, and this package's tsconfig
+ * deliberately omits the DOM lib so browser globals cannot leak into shared
+ * code. Declaring only the three methods used keeps the logger usable from the
+ * API, the browser and any other runtime — all of them provide these.
+ */
+declare const console: {
+  log(message: string): void;
+  warn(message: string): void;
+  error(message: string): void;
+};
+
 type Level = "debug" | "info" | "warn" | "error";
 
 function emit(level: Level, message: string, meta?: unknown): void {

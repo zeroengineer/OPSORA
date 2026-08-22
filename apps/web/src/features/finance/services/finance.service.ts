@@ -8,9 +8,11 @@ import type {
 
 import { apiClient } from "@/services/api-client.ts";
 
-function toQueryString(query: Record<string, string | number | undefined>): string {
+/** Serialises a query object, dropping keys whose value is undefined.
+    Generic over the shape so interfaces pass without an index signature. */
+function toQueryString<T extends object>(query: T): string {
   const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(query)) {
+  for (const [key, value] of Object.entries(query) as [string, unknown][]) {
     if (value !== undefined) params.set(key, String(value));
   }
   const qs = params.toString();

@@ -123,7 +123,7 @@ cp apps/web/.env.example apps/web/.env
 
 | Variable | Required | Notes |
 |---|---|---|
-| `DATABASE_URL` | yes | `postgresql://user:pass@localhost:5432/opsora` |
+| `DATABASE_URL` | no | Defaults to `file:./.data/pglite` — embedded, no server. Point at `postgresql://user:pass@host:5432/opsora` for a real one. |
 | `BETTER_AUTH_SECRET` | yes | ≥ 32 chars — generate with `openssl rand -base64 32` |
 | `BETTER_AUTH_URL` | yes | Public URL of the API, e.g. `http://localhost:3000` |
 | `PORT` | no | Defaults to `3000` |
@@ -148,10 +148,25 @@ a single source of truth.
 
 ### Database setup
 
+**None required.** `DATABASE_URL` defaults to `file:./.data/pglite`, an embedded
+[PGlite](https://pglite.dev) database — real Postgres compiled to WebAssembly, persisted to
+`packages/database/.data/pglite/`. The API applies pending migrations on startup, so a fresh
+clone is just `bun install && bun run dev`.
+
+To use a Postgres server instead, point `DATABASE_URL` at it and migrate explicitly:
+
 ```bash
-createdb opsora          # or point DATABASE_URL at an existing database
-bun run db:migrate       # applies migrations/ — creates the Better Auth tables
+createdb opsora
+DATABASE_URL=postgresql://... bun run db:migrate
 ```
+
+Migrations are only applied automatically for the embedded database. A shared Postgres keeps
+the explicit step — auto-migrating one on process start is how deploys corrupt data. The
+production guard in `@opsora/config/server` refuses to boot with the embedded default when
+`NODE_ENV=production`.
+
+> PGlite is a single in-process connection: requests serialise, and only one process can open
+> the directory at a time. That is fine for development and is not a load-testing target.
 
 ---
 
@@ -188,7 +203,7 @@ bun run dev:api
 | `bun run lint:fix` | ESLint with autofix |
 | `bun run typecheck` | `tsc --noEmit` across all workspaces |
 | `bun run db:generate` | Generate a migration from schema changes |
-| `bun run db:migrate` | Apply pending migrations |
+| `bun run db:migrate` | Apply pending migrations (automatic on startup for PGlite) |
 | `bun run db:push` | Push schema directly (development only) |
 | `bun run db:studio` | Open Drizzle Studio |
 | `bun run clean` | Remove build output and `node_modules` |
@@ -203,7 +218,8 @@ bun run dev:api
 | Endpoint | Auth | Description |
 |---|---|---|
 | `GET /health` | public | `{"status":"ok"}` — for uptime probes |
-| `ALL /api/auth/*` | public | Better Auth (sign-up, sign-in, session) |
+| `ALL /api/auth/*` | public | Better Auth — sign-up, sign-in, session, password reset |
+| `GET /docs` | public | Scalar API reference, covering every endpoint including auth |
 | `GET /api/clients` | required | Reference module; returns an empty page |
 | `GET /api/{sales,finance,documents,knowledge-base}` | required | Module placeholders |
 

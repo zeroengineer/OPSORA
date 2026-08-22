@@ -9,6 +9,11 @@ interface AddTransactionFormProps {
   onDone: () => void;
 }
 
+const FIELD_CLASS =
+  "rounded-control border border-line bg-surface px-2.5 py-2 text-xs text-ink outline-none placeholder:text-faint focus:border-red";
+
+const LABEL_CLASS = "text-[8.5px] uppercase tracking-[0.14em] text-mid";
+
 const TYPE_OPTIONS: { value: TransactionType; label: string }[] = [
   { value: "in", label: "In" },
   { value: "out", label: "Out" },
@@ -29,8 +34,13 @@ export function AddTransactionForm({ categories, onDone }: AddTransactionFormPro
     setError(null);
 
     const amountMinor = Math.round(Number.parseFloat(amount) * 100);
-    if (!description.trim() || !category.trim() || !Number.isFinite(amountMinor) || amountMinor <= 0) {
-      setError("Fill in a description, category, and a positive amount.");
+    if (
+      !description.trim() ||
+      !category.trim() ||
+      !Number.isFinite(amountMinor) ||
+      amountMinor <= 0
+    ) {
+      setError("Fill in a description, a category, and an amount above zero.");
       return;
     }
 
@@ -51,33 +61,40 @@ export function AddTransactionForm({ categories, onDone }: AddTransactionFormPro
   return (
     <form
       onSubmit={(e) => void handleSubmit(e)}
-      className="grid grid-cols-2 gap-3 rounded-card border border-line bg-surface-2 p-4 lg:grid-cols-5 lg:items-end"
+      className="grid grid-cols-2 items-end gap-2.5 border-b border-line bg-surface-2 px-[18px] py-4 lg:grid-cols-[120px_1.6fr_1fr_130px_130px_auto]"
     >
       <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] uppercase tracking-[0.14em] text-faint">Type</span>
-        <SegmentedControl options={TYPE_OPTIONS} value={type} onChange={setType} />
+        <span className={LABEL_CLASS}>Type</span>
+        <SegmentedControl
+          label="Entry type"
+          options={TYPE_OPTIONS}
+          value={type}
+          onChange={setType}
+        />
       </div>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[10px] uppercase tracking-[0.14em] text-faint">Description</span>
+        <span className={LABEL_CLASS}>Description</span>
         <input
           value={description}
           onChange={(e) => {
             setDescription(e.target.value);
           }}
-          className="rounded-input border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-red"
+          placeholder="e.g. Brand sprint — milestone 2"
+          className={FIELD_CLASS}
         />
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[10px] uppercase tracking-[0.14em] text-faint">Category</span>
+        <span className={LABEL_CLASS}>Category</span>
         <input
           value={category}
           onChange={(e) => {
             setCategory(e.target.value);
           }}
           list="finance-categories"
-          className="rounded-input border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-red"
+          placeholder="Project Revenue"
+          className={FIELD_CLASS}
         />
         <datalist id="finance-categories">
           {categories.map((c) => (
@@ -87,7 +104,7 @@ export function AddTransactionForm({ categories, onDone }: AddTransactionFormPro
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[10px] uppercase tracking-[0.14em] text-faint">Amount</span>
+        <span className={LABEL_CLASS}>Amount</span>
         <input
           value={amount}
           onChange={(e) => {
@@ -96,33 +113,32 @@ export function AddTransactionForm({ categories, onDone }: AddTransactionFormPro
           type="number"
           step="0.01"
           min="0"
-          className="rounded-input border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-red"
+          placeholder="0"
+          className={FIELD_CLASS}
         />
       </label>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[10px] uppercase tracking-[0.14em] text-faint">Date</span>
+        <span className={LABEL_CLASS}>Date</span>
         <input
           value={date}
           onChange={(e) => {
             setDate(e.target.value);
           }}
           type="date"
-          className="rounded-input border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-red"
+          className={FIELD_CLASS}
         />
       </label>
-
-      {error && (
-        <p className="col-span-full text-xs text-red">{error}</p>
-      )}
 
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="col-span-full rounded-control bg-red px-4 py-2 text-xs font-medium text-white hover:opacity-85 disabled:opacity-50 lg:col-span-1"
+        className="rounded-control bg-ink px-[18px] py-2.5 text-[10px] uppercase tracking-[0.14em] text-bg transition-opacity hover:opacity-85 disabled:opacity-50"
       >
         {mutation.isPending ? "Recording…" : "Record"}
       </button>
+
+      {error && <p className="col-span-full text-[11px] text-red">{error}</p>}
     </form>
   );
 }
